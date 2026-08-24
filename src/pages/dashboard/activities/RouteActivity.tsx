@@ -51,13 +51,16 @@ const RouteActivity: VoidComponent<RouteActivityProps> = (props) => {
 
   const onTimelineChange = (newTime: number) => {
     const video = videoRef()
-    if (video) video.currentTime = newTime
+    if (video && Number.isFinite(newTime) && !Number.isNaN(newTime) && newTime >= 0) {
+      video.currentTime = newTime
+    }
   }
 
   createEffect(() => {
     routeName() // track changes
-    setSeekTime(props.startTime)
-    onTimelineChange(props.startTime)
+    const validStartTime = Number.isFinite(props.startTime) && !Number.isNaN(props.startTime) ? props.startTime : 0
+    setSeekTime(validStartTime)
+    onTimelineChange(validStartTime)
   })
 
   const [device] = createResource(() => props.dongleId, getDevice)

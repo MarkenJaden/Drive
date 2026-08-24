@@ -45,16 +45,6 @@ export default function Login() {
           >
             Sign in with GitHub
           </Button>
-
-          <Button
-            class="h-12 text-sm bg-surface-container hover:bg-surface-container-high text-on-surface"
-            onClick={() => {
-              setAccessToken('self_hosted_drive_owner_token')
-              window.location.href = '/'
-            }}
-          >
-            Direkt-Login (Self-Host Owner)
-          </Button>
         </div>
 
         <div class="flex justify-between gap-4">

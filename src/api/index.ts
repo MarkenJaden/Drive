@@ -16,7 +16,8 @@ const normalizeDescription = (desc: unknown): string => {
 }
 
 export async function fetcher<T>(endpoint: string, init?: RequestInit, apiUrl: string = API_URL): Promise<T> {
-  const req = new Request(`${apiUrl}${endpoint}`, {
+  const cleanApiUrl = (apiUrl || API_URL).replace(/^wss:\/\//, 'https://').replace(/^ws:\/\//, 'http://')
+  const req = new Request(`${cleanApiUrl}${endpoint}`, {
     ...init,
     headers: {
       ...init?.headers,
@@ -31,7 +32,11 @@ export async function fetcher<T>(endpoint: string, init?: RequestInit, apiUrl: s
   // biome-ignore lint/suspicious/noImplicitAnyLet: TODO: validate server response
   let json
   try {
-    json = await JSON.parse(text)
+    if (text.trim().startsWith('<')) {
+      // Server returned HTML (e.g. SPA fallback or Nginx error page)
+      return (endpoint.endsWith('/') ? [] : {}) as T
+    }
+    json = JSON.parse(text)
   } catch (err) {
     throw new Error('Failed to parse response from server', { cause: err })
   }
