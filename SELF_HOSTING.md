@@ -1,137 +1,83 @@
-# Self-Hosting Guide für "Drive" auf `drive.markenjaden.de`
+# Self-Hosting Guide für "Drive" mit Coolify
 
-Dieser Leitfaden beschreibt Schritt für Schritt, wie du die **Drive** Plattform auf deiner eigenen Domain (`drive.markenjaden.de`) hostest und an dein Comma 4 / StarPilot anbindest.
-
----
-
-## 1. Architektur-Übersicht
-
-Das Comma Connect / Drive Ökosystem besteht aus 4 Kern-Komponenten:
-
-```mermaid
-graph TD
-    A[Comma 4 / StarPilot] -->|Uploads: Videos, qlogs, fuel reports| B[S3/MinIO Storage & Backend]
-    A -->|WebSocket Telemetry & Remote Control| C[Athena Gateway /ws]
-    D[Web Browser / Smartphone] -->|PWA Frontend| E[Drive Web UI :80 / :443]
-    D -->|REST API Calls| B
-    E -.-> C
-```
-
-1. **Drive Web Frontend (dieses Repo):**
-   * Progressive Web App (Solid.js + Vite + Tailwind).
-   * Wird als statische Dateien über Nginx oder im Docker-Container ausgeliefert.
-2. **Connect Backend & API Gateway (`api.drive.markenjaden.de` oder `drive.markenjaden.de/api`):**
-   * Verwaltet Benutzer, Authentifizierung (GitHub OAuth / Token), Routen-Metadaten und Geräte-Pairing.
-3. **Athena Gateway (`/ws`):**
-   * WebSocket-Server für Live-Telemetrie, Live-View-Streaming und Remote-SSH zum Comma 4.
-4. **Log- & Video-Speicher (MinIO / S3 oder lokales Dateisystem):**
-   * Speichert `.hevc` Videoclips, `qlog` Telemetriebündel und Spritverbrauchsberichte.
+Dieser Leitfaden beschreibt, wie du **Drive** und alle dazugehörigen Komponenten unkompliziert über **Coolify** auf deinem eigenen Server unter `drive.markenjaden.de` bereitstellst.
 
 ---
 
-## 2. Schnelle Bereitstellung mit Docker & Docker-Compose
+## 1. Warum Coolify?
+Coolify ist eine Open-Source PaaS (wie Netlify/Vercel/Heroku auf eigenem VPS/Server), die folgendes automatisch übernimmt:
+* **Automatisches SSL/TLS (Let's Encrypt)** für `drive.markenjaden.de`.
+* **Automatische Git-Deployments (CI/CD)** bei jedem `git push`.
+* **Integrierter Reverse Proxy (Traefik)** mit nativer WebSocket-Unterstützung für Athena (`/ws`).
+* **1-Click MinIO (S3-kompatibler Storage)** für deine Fahrtenvideos und Telemetriedateien.
 
-### `docker-compose.yml` Vorlage
+---
 
-Erstelle auf deinem Server ein Verzeichnis `~/drive-server` mit folgender `docker-compose.yml`:
+## 2. Schritt-für-Schritt Einrichtung in Coolify
+
+### Schritt 1: DNS-Eintrag setzen
+Lege bei deinem Domain-Provider (z. B. Cloudflare, Strato, Hetzner) folgenden DNS A-Record an:
+* **Host / Name:** `drive` (bzw. `drive.markenjaden.de`)
+* **Typ:** `A`
+* **Wert / Ziel:** Öffentliche IP-Adresse deines Coolify-Servers
+
+---
+
+### Schritt 2: Drive Web Frontend in Coolify anlegen
+
+1. Öffne dein **Coolify Dashboard**.
+2. Klicke auf **Projects** -> Wähle oder erstelle ein Projekt (z. B. *"StarPilot Drive"*).
+3. Klicke auf **+ New Resource** -> Wähle **Public Repository** (oder Private GitHub App).
+4. **Repository URL:** `https://github.com/MarkenJaden/Drive`
+5. **Branch:** `master`
+6. **Build Pack:** Wähle **Dockerfile**.
+7. **Domains:** Trage `https://drive.markenjaden.de` ein.
+8. **Port:** `80` (Standard Nginx Port im Dockerfile).
+9. **Environment Variables (optional zur Laufzeit/Build):**
+   ```env
+   VITE_API_URL=https://drive.markenjaden.de
+   VITE_ATHENA_URL=wss://drive.markenjaden.de/ws
+   ```
+10. Klicke auf **Deploy**. Coolify baut das Docker-Image, generiert das SSL-Zertifikat und schaltet die Seite online!
+
+---
+
+### Schritt 3: Storage (MinIO) für Videos & Logs in Coolify bereitstellen
+
+1. Klicke im Projekt auf **+ New Resource** -> Wähle **Service**.
+2. Wähle **MinIO** aus dem Service-Katalog.
+3. Vergib ein sicheres Root-Passwort und lege einen Bucket an (z. B. `comma-logs`).
+4. Setze als Domain z. B. `https://storage.markenjaden.de` oder mappe es auf den Server.
+
+---
+
+### Schritt 4: StarPilot auf deinem Comma 4 konfigurieren
+
+In StarPilot auf deinem Comma 4 ist `drive.markenjaden.de` bereits als wählbarer Server hinterlegt.
+* Sobald du in StarPilot den Connect-Server auf **Drive (`drive.markenjaden.de`)** stellst, sendet dein Comma 4 alle Fahrten, Videos, Telemetriedaten und Verbrauchsberichte automatisch an deine Coolify-Instanz!
+
+---
+
+## 3. Manuelle Bereitstellung mit Docker Compose (Alternative)
+
+Falls du Coolify mit einer Docker-Compose Datei nutzt:
 
 ```yaml
 version: '3.8'
 
 services:
-  # 1. Drive Web UI
   drive-web:
     build:
-      context: .
+      context: https://github.com/MarkenJaden/Drive.git#master
       dockerfile: Dockerfile
     container_name: drive_web
     restart: always
     environment:
       - VITE_API_URL=https://drive.markenjaden.de
       - VITE_ATHENA_URL=wss://drive.markenjaden.de/ws
-    ports:
-      - "3000:80"
-
-  # 2. MinIO S3 Object Storage für Fahrtenvideos & Logs
-  minio:
-    image: minio/minio:latest
-    container_name: drive_minio
-    restart: always
-    command: server /data --console-address ":9001"
-    environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=DeinSicheresPasswort123!
-    volumes:
-      - minio_data:/data
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-
-volumes:
-  minio_data:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.drive.rule=Host(`drive.markenjaden.de`)"
+      - "traefik.http.routers.drive.entrypoints=https"
+      - "traefik.http.routers.drive.tls.certresolver=letsencrypt"
 ```
-
----
-
-## 3. Nginx Reverse-Proxy & SSL Konfiguration
-
-Erstelle die Nginx-Konfigurationsdatei `/etc/nginx/sites-available/drive.markenjaden.de`:
-
-```nginx
-server {
-    listen 80;
-    server_name drive.markenjaden.de;
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name drive.markenjaden.de;
-
-    ssl_certificate /etc/letsencrypt/live/drive.markenjaden.de/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/drive.markenjaden.de/privkey.pem;
-
-    # Gzip Compression
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
-
-    # 1. Drive Web UI (Frontend)
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # 2. Athena WebSocket Endpoint
-    location /ws {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_read_timeout 86400s;
-        proxy_send_timeout 86400s;
-    }
-
-    # 3. Video- und Routen-Storage (MinIO / S3 Proxy)
-    location /storage/ {
-        proxy_pass http://127.0.0.1:9000/;
-        proxy_set_header Host $host;
-        client_max_body_size 500M;
-    }
-}
-```
-
-SSL-Zertifikat mit Let's Encrypt / Certbot erstellen:
-```bash
-sudo certbot --nginx -d drive.markenjaden.de
-```
-
----
-
-## 4. StarPilot Konfiguration
-
-1. In StarPilot ist `drive.markenjaden.de` als auswählbarer Upload- & Connect-Server hinterlegt.
-2. Sobald `UseDriveServer` auf deinem Comma 4 aktiviert ist, sendet das Gerät alle Telemetriedaten, Routen und Verbrauchsberichte direkt an `https://drive.markenjaden.de`.
