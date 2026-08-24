@@ -21,6 +21,7 @@ import DeviceList from './components/DeviceList'
 import DeviceActivity from './activities/DeviceActivity'
 import FuelActivity from './activities/FuelActivity'
 import LiveViewActivity from './activities/LiveViewActivity'
+import LogbookActivity from './activities/LogbookActivity'
 import RemoteSshActivity from './activities/RemoteSshActivity'
 import RouteActivity from './activities/RouteActivity'
 import SettingsActivity from './activities/SettingsActivity'
@@ -179,6 +180,9 @@ const Dashboard: Component<RouteSectionProps> = () => {
                   </Match>
                   <Match when={urlState().dateStr === 'fuel'}>
                     <FuelActivity dongleId={dongleId} />
+                  </Match>
+                  <Match when={urlState().dateStr === 'logbook'}>
+                    <LogbookActivity dongleId={dongleId} />
                   </Match>
                   <Match when={urlState().dateStr === 'live'}>
                     <LiveViewActivity dongleId={dongleId} />

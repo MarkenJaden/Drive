@@ -121,6 +121,7 @@ const DeviceActivity: VoidComponent<DeviceActivityProps> = (props) => {
             <div class="flex gap-4">
               <DeviceBatteryVoltage dongleId={props.dongleId} />
               <IconButton name="local_gas_station" title="Fuel & Energy" href={`/${props.dongleId}/fuel`} />
+              <IconButton name="menu_book" title="Digitales Fahrtenbuch" href={`/${props.dongleId}/logbook`} />
               <IconButton name="videocam" href={`/${props.dongleId}/live`} />
               <IconButton name="terminal" href={`/${props.dongleId}/ssh`} />
               <IconButton name="settings" href={`/${props.dongleId}/settings`} />
