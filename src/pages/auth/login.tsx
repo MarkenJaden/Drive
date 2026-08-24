@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js'
 import { getGitHubAuthUrl } from '~/api/auth'
+import { setAccessToken } from '~/api/auth/client'
 
 import Button from '~/components/material/Button'
 
@@ -43,6 +44,16 @@ export default function Login() {
             leading={<img src="/images/logo-github.svg" alt="" width={32} height={32} />}
           >
             Sign in with GitHub
+          </Button>
+
+          <Button
+            class="h-12 text-sm bg-surface-container hover:bg-surface-container-high text-on-surface"
+            onClick={() => {
+              setAccessToken('self_hosted_drive_owner_token')
+              window.location.href = '/'
+            }}
+          >
+            Direkt-Login (Self-Host Owner)
           </Button>
         </div>
 
