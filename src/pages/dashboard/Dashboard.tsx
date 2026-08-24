@@ -200,7 +200,7 @@ const Dashboard: Component<RouteSectionProps> = () => {
         <Match when={getDefaultDongleId()} keyed>
           {(defaultDongleId) => <Navigate href={`/${defaultDongleId}`} />}
         </Match>
-        <Match when={devices()?.length === 0}>
+        <Match when={!urlState().dongleId}>
           <FirstPairActivity />
         </Match>
       </Switch>
