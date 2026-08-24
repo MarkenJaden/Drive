@@ -51,22 +51,20 @@ const DashboardDrawer: VoidComponent<{ devices: Device[] | undefined }> = (props
         Add new device
       </Button>
       <div class="m-4 mt-0">
-        <ButtonBase href={USERADMIN_URL} onClick={onClose}>
-          <Suspense fallback={<div class="min-h-16 rounded-md skeleton-loader" />}>
-            <div class="flex min-h-16 max-w-full items-center rounded-md px-3 outline outline-1 outline-outline-variant">
-              <div class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
-                <Icon name="person" filled />
-              </div>
-              <div class="mx-3 min-w-0">
-                <ErrorBoundary fallback="Error loading profile">
-                  <div class="truncate text-sm text-on-surface">{profile()?.email}</div>
-                </ErrorBoundary>
-              </div>
-              <div class="grow" />
-              <IconButton name="logout" href="/logout" />
+        <Suspense fallback={<div class="min-h-16 rounded-md skeleton-loader" />}>
+          <div class="flex min-h-16 max-w-full items-center rounded-md px-3 bg-surface-container outline outline-1 outline-outline-variant">
+            <div class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
+              <Icon name="person" filled />
             </div>
-          </Suspense>
-        </ButtonBase>
+            <div class="mx-3 min-w-0">
+              <ErrorBoundary fallback={<div class="text-sm text-on-surface">Drive User</div>}>
+                <div class="truncate text-sm font-medium text-on-surface">{profile()?.email || 'Drive User'}</div>
+              </ErrorBoundary>
+            </div>
+            <div class="grow" />
+            <IconButton name="logout" href="/logout" title="Sign out" />
+          </div>
+        </Suspense>
       </div>
     </>
   )
