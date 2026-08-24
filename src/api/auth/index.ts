@@ -36,15 +36,15 @@ export function getAppleAuthUrl(): string {
   return 'https://appleid.apple.com/auth/authorize?' + stringify(params)
 }
 
-const GITHUB_OAUTH_PARAMS = {
-  client_id: 'Ov23liy0AI1YCd15pypf',
-  redirect_uri: `${API_URL}/v2/auth/h/redirect/`,
-  scope: 'read:user user:email',
-}
 export function getGitHubAuthUrl(): string {
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID || 'Ov23liy0AI1YCd15pypf'
+  const redirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI || `${API_URL}/v2/auth/h/redirect/`
   const params = {
-    ...GITHUB_OAUTH_PARAMS,
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    scope: 'read:user user:email',
     state: 'service,' + getService(),
   }
   return 'https://github.com/login/oauth/authorize?' + stringify(params)
 }
+

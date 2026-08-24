@@ -23,7 +23,21 @@ Lege bei deinem Domain-Provider (z. B. Cloudflare, Strato, Hetzner) folgenden DN
 
 ---
 
-### Schritt 2: Drive Web Frontend in Coolify anlegen
+### Schritt 2: Eigene GitHub OAuth App erstellen
+
+Damit der Login auf deiner eigenen Domain funktioniert:
+1. Gehe in deinem GitHub-Account auf: **Settings -> Developer Settings -> OAuth Apps -> New OAuth App** (oder direkt `https://github.com/settings/applications/new`).
+2. Fülle die Felder wie folgt aus:
+   * **Application name:** `Drive`
+   * **Homepage URL:** `https://drive.markenjaden.de`
+   * **Authorization callback URL:** `https://drive.markenjaden.de/auth` (bzw. deine API-Callback-URL)
+3. Klicke auf **Register application**.
+4. Kopiere die generierte **Client ID** (z. B. `Ov23...`).
+5. Klicke auf **Generate a new client secret** und speichere das Secret sicher ab.
+
+---
+
+### Schritt 3: Drive Web Frontend in Coolify anlegen
 
 1. Öffne dein **Coolify Dashboard**.
 2. Klicke auf **Projects** -> Wähle oder erstelle ein Projekt (z. B. *"StarPilot Drive"*).
@@ -33,16 +47,18 @@ Lege bei deinem Domain-Provider (z. B. Cloudflare, Strato, Hetzner) folgenden DN
 6. **Build Pack:** Wähle **Dockerfile**.
 7. **Domains:** Trage `https://drive.markenjaden.de` ein.
 8. **Port:** `80` (Standard Nginx Port im Dockerfile).
-9. **Environment Variables (optional zur Laufzeit/Build):**
+9. **Environment Variables (in Coolify eintragen):**
    ```env
    VITE_API_URL=https://drive.markenjaden.de
    VITE_ATHENA_URL=wss://drive.markenjaden.de/ws
+   VITE_GITHUB_CLIENT_ID=DEINE_GITHUB_CLIENT_ID
    ```
 10. Klicke auf **Deploy**. Coolify baut das Docker-Image, generiert das SSL-Zertifikat und schaltet die Seite online!
 
+
 ---
 
-### Schritt 3: Storage (MinIO) für Videos & Logs in Coolify bereitstellen
+### Schritt 4: Storage (MinIO) für Videos & Logs in Coolify bereitstellen
 
 1. Klicke im Projekt auf **+ New Resource** -> Wähle **Service**.
 2. Wähle **MinIO** aus dem Service-Katalog.
@@ -51,7 +67,7 @@ Lege bei deinem Domain-Provider (z. B. Cloudflare, Strato, Hetzner) folgenden DN
 
 ---
 
-### Schritt 4: StarPilot auf deinem Comma 4 konfigurieren
+### Schritt 5: StarPilot auf deinem Comma 4 konfigurieren
 
 In StarPilot auf deinem Comma 4 ist `drive.markenjaden.de` bereits als wählbarer Server hinterlegt.
 * Sobald du in StarPilot den Connect-Server auf **Drive (`drive.markenjaden.de`)** stellst, sendet dein Comma 4 alle Fahrten, Videos, Telemetriedaten und Verbrauchsberichte automatisch an deine Coolify-Instanz!

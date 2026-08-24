@@ -102,7 +102,7 @@ const FirstPairActivity: Component = () => {
         class="font-bold"
         leading={
           <Show when={!modal()} fallback={<DrawerToggleButton />}>
-            <img alt="" src="/images/comma-white.png" class="h-8" />
+            <img alt="Drive" src="/images/comma-white.svg" class="h-8" />
           </Show>
         }
       >
