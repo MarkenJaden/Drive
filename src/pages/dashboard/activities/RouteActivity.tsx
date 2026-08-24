@@ -11,6 +11,7 @@ import { resolved } from '~/utils/reactivity'
 import IconButton from '~/components/material/IconButton'
 import TopAppBar from '~/components/material/TopAppBar'
 import RouteActions from '~/components/RouteActions'
+import RouteFuelBar from '~/components/RouteFuelBar'
 import RouteStaticMap from '~/components/RouteStaticMap'
 import RouteStatisticsBar from '~/components/RouteStatisticsBar'
 import RouteVideoPlayer from '~/components/RouteVideoPlayer'
@@ -83,6 +84,7 @@ const RouteActivity: VoidComponent<RouteActivityProps> = (props) => {
             events={events()}
             sprites={sprites()}
           />
+          <RouteFuelBar route={route()} seekTime={seekTime()} />
 
           <Show when={selection().startTime || selection().endTime}>
             <A

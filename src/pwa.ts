@@ -28,7 +28,10 @@ const runServiceWorkerUpdate = registerSW({
 
 export const isUpdateAvailable = updateAvailable
 
-export async function updateKonikStable(): Promise<void> {
+export async function updateDrive(): Promise<void> {
   await runServiceWorkerUpdate(true)
   setUpdateAvailable(false)
 }
+
+export const updateKonikStable = updateDrive
+

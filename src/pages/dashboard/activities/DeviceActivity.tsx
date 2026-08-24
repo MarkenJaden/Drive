@@ -103,7 +103,7 @@ const DeviceActivity: VoidComponent<DeviceActivityProps> = (props) => {
           </Show>
         }
       >
-        Stable
+        Drive
       </TopAppBar>
       <div class="flex flex-col gap-4 px-4 pb-4">
         <div class="h-min overflow-hidden rounded-lg bg-surface-container-low">
@@ -120,6 +120,7 @@ const DeviceActivity: VoidComponent<DeviceActivityProps> = (props) => {
             </Suspense>
             <div class="flex gap-4">
               <DeviceBatteryVoltage dongleId={props.dongleId} />
+              <IconButton name="local_gas_station" title="Fuel & Energy" href={`/${props.dongleId}/fuel`} />
               <IconButton name="videocam" href={`/${props.dongleId}/live`} />
               <IconButton name="terminal" href={`/${props.dongleId}/ssh`} />
               <IconButton name="settings" href={`/${props.dongleId}/settings`} />

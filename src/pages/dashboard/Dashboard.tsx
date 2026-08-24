@@ -19,6 +19,7 @@ import TopAppBar from '~/components/material/TopAppBar'
 
 import DeviceList from './components/DeviceList'
 import DeviceActivity from './activities/DeviceActivity'
+import FuelActivity from './activities/FuelActivity'
 import LiveViewActivity from './activities/LiveViewActivity'
 import RemoteSshActivity from './activities/RemoteSshActivity'
 import RouteActivity from './activities/RouteActivity'
@@ -105,7 +106,7 @@ const FirstPairActivity: Component = () => {
           </Show>
         }
       >
-        Stable
+        Drive
       </TopAppBar>
       <section class="flex flex-col gap-4 py-2 items-center mx-auto max-w-md px-4 mt-4 sm:mt-8 md:mt-16">
         <h2 class="text-xl">Pair your device</h2>
@@ -177,6 +178,9 @@ const Dashboard: Component<RouteSectionProps> = () => {
                 >
                   <Match when={urlState().dateStr === 'settings' || urlState().dateStr === 'prime'}>
                     <SettingsActivity dongleId={dongleId} />
+                  </Match>
+                  <Match when={urlState().dateStr === 'fuel'}>
+                    <FuelActivity dongleId={dongleId} />
                   </Match>
                   <Match when={urlState().dateStr === 'live'}>
                     <LiveViewActivity dongleId={dongleId} />

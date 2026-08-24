@@ -33,8 +33,8 @@ export default function Auth() {
     <Show when={code && provider} fallback={<Navigate href="/login" />} keyed>
       <div class="flex min-h-screen max-w-lg flex-col gap-8 items-center mx-auto justify-center text-on-background bg-background p-6">
         <div class="flex flex-col gap-4 items-center">
-          <img src="/images/logo-connect-light.svg" alt="comma connect" width={96} height={96} />
-          <h1 class="text-2xl">Konik Stable</h1>
+          <img src="/images/logo-connect-light.svg" alt="Drive" width={96} height={96} />
+          <h1 class="text-2xl">Drive</h1>
         </div>
         <Show
           when={error()}
