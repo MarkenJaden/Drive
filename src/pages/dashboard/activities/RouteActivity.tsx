@@ -14,9 +14,11 @@ import RouteActions from '~/components/RouteActions'
 import RouteFuelBar from '~/components/RouteFuelBar'
 import RouteStaticMap from '~/components/RouteStaticMap'
 import RouteStatisticsBar from '~/components/RouteStatisticsBar'
+import RouteVideoExporter from '~/components/RouteVideoExporter'
 import RouteVideoPlayer from '~/components/RouteVideoPlayer'
 import RouteUploadButtons from '~/components/RouteUploadButtons'
 import Timeline from '~/components/Timeline'
+import Icon from '~/components/material/Icon'
 import { getTimelineEvents } from '~/api/derived'
 import { A } from '@solidjs/router'
 
@@ -30,6 +32,7 @@ type RouteActivityProps = {
 const RouteActivity: VoidComponent<RouteActivityProps> = (props) => {
   const [seekTime, setSeekTime] = createSignal(props.startTime)
   const [videoRef, setVideoRef] = createSignal<HTMLVideoElement>()
+  const [showExporter, setShowExporter] = createSignal(false)
 
   const routeName = () => `${props.dongleId}|${props.dateStr}`
   const [route] = createResource(routeName, getRoute)
@@ -100,6 +103,16 @@ const RouteActivity: VoidComponent<RouteActivityProps> = (props) => {
           </Show>
         </div>
 
+        {/* Dashcam Video Export with HUD Button */}
+        <button
+          type="button"
+          class="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-sm border border-primary/30 transition shadow-sm cursor-pointer"
+          onClick={() => setShowExporter(true)}
+        >
+          <Icon name="movie_filter" size="20" />
+          <span>🎬 Dashcam-Video mit Telemetrie-HUD exportieren</span>
+        </button>
+
         <div class="flex flex-col gap-2">
           <span class="text-sm">Route Info</span>
           <div class="flex flex-col rounded-md overflow-hidden bg-surface-container">
@@ -125,6 +138,13 @@ const RouteActivity: VoidComponent<RouteActivityProps> = (props) => {
           </div>
         </div>
       </div>
+
+      <RouteVideoExporter
+        route={route()}
+        videoEl={videoRef()}
+        isOpen={showExporter()}
+        onClose={() => setShowExporter(false)}
+      />
     </>
   )
 }
