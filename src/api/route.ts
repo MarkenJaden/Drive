@@ -32,5 +32,8 @@ export const setRoutePublic = (routeName: string, isPublic: boolean): Promise<Ro
 export const getPreservedRoutes = (dongleId: string): Promise<Route[]> =>
   fetcher<Route[]>(`/v1/devices/${dongleId}/routes/preserved`).catch(() => [])
 
+export const getRoutes = (dongleId: string, limit = 100): Promise<Route[]> =>
+  fetcher<Route[]>(`/v1/devices/${dongleId}/routes?limit=${limit}`).catch(() => [])
+
 export const setRoutePreserved = (routeName: string, preserved: boolean): Promise<Route> =>
   fetcher<Route>(`/v1/route/${routeName}/preserve`, { method: preserved ? 'POST' : 'DELETE' })

@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For, onMount, Show, type VoidComponent } from 'solid-js'
 import { createResource } from 'solid-js'
-import { getRoutes } from '~/api/devices'
+import { getRoutes } from '~/api/route'
 import Icon from '~/components/material/Icon'
 import IconButton from '~/components/material/IconButton'
 import TopAppBar from '~/components/material/TopAppBar'
