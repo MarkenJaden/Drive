@@ -8,27 +8,31 @@ let initialized = false
 const [_accessToken, _setAccessToken] = createSignal<string | null>(null)
 
 export async function refreshAccessToken(code: string, provider: string): Promise<void> {
-  try {
-    const resp = await fetch(`${API_URL}/v2/auth/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({ code, provider }),
-    })
+  const isExternalBackend = import.meta.env.VITE_USE_EXTERNAL_AUTH === 'true'
 
-    if (resp.ok) {
-      const json = (await resp.json()) as Record<string, string>
-      if (json.access_token) {
-        setAccessToken(json.access_token)
-        return
+  if (isExternalBackend) {
+    try {
+      const resp = await fetch(`${API_URL}/v2/auth/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ code, provider }),
+      })
+
+      if (resp.ok) {
+        const json = (await resp.json()) as Record<string, string>
+        if (json.access_token) {
+          setAccessToken(json.access_token)
+          return
+        }
       }
+    } catch {
+      // ignore
     }
-  } catch {
-    // API backend /v2/auth/ not available
   }
 
-  // Self-Hosted fallback for single-container deployments:
+  // Self-Hosted JWT session creation (pure client-side)
   // Create a persistent self-hosted JWT session
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
   const payload = btoa(
