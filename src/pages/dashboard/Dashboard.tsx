@@ -3,7 +3,7 @@ import type { Component, JSXElement, VoidComponent } from 'solid-js'
 import { Navigate, type RouteSectionProps, useLocation } from '@solidjs/router'
 import clsx from 'clsx'
 
-import { isSignedIn } from '~/api/auth/client'
+import { isSignedIn, setAccessToken } from '~/api/auth/client'
 import { USERADMIN_URL } from '~/api/config'
 import { getDevices } from '~/api/devices'
 import { getProfile } from '~/api/profile'
@@ -140,6 +140,11 @@ const Dashboard: Component<RouteSectionProps> = () => {
       endTime,
     }
   })
+
+  const directJwt = (location.query.jwt || location.query.token || location.query.access_token) as string | undefined
+  if (directJwt) {
+    setAccessToken(directJwt)
+  }
 
   const [devices, { refetch }] = createResource(getDevices, { initialValue: undefined })
 
