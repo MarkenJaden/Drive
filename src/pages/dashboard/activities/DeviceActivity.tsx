@@ -43,7 +43,7 @@ const DeviceBatteryVoltage: VoidComponent<{ dongleId: string }> = (props) => {
         <Match when={voltage.state === 'errored'}>Offline</Match>
         <Match when={resolved(voltage)}>
           <Show when={voltage.latest} fallback={<div class="text-sm">Offline</div>}>
-            {(voltage) => <div class="text-sm">{(voltage() / 1000).toFixed(1)} V</div>}
+            {(voltage) => <div class="text-sm">{((Number(voltage()) || 0) / 1000).toFixed(1)} V</div>}
           </Show>
         </Match>
       </Switch>

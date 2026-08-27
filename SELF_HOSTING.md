@@ -1,19 +1,21 @@
-# Self-Hosting Guide für "Drive" mit Coolify
+# Self-Hosting Guide für "Drive" (Komplett-Stack) mit Coolify
 
-Dieser Leitfaden beschreibt, wie du **Drive** und alle dazugehörigen Komponenten unkompliziert über **Coolify** auf deinem eigenen Server unter `drive.markenjaden.de` bereitstellst.
-
----
-
-## 1. Warum Coolify?
-Coolify ist eine Open-Source PaaS (wie Netlify/Vercel/Heroku auf eigenem VPS/Server), die folgendes automatisch übernimmt:
-* **Automatisches SSL/TLS (Let's Encrypt)** für `drive.markenjaden.de`.
-* **Automatische Git-Deployments (CI/CD)** bei jedem `git push`.
-* **Integrierter Reverse Proxy (Traefik)** mit nativer WebSocket-Unterstützung für Athena (`/ws`).
-* **1-Click MinIO (S3-kompatibler Storage)** für deine Fahrtenvideos und Telemetriedateien.
+Dieser Leitfaden beschreibt, wie du den **vollständigen Drive-Stack** (Web-Frontend + FastAPI Backend + Athena WebSocket Gateway + SQLite-Datenbank + Lokaler Video-Storage) unkompliziert über **Coolify** auf deinem eigenen Server unter `drive.markenjaden.de` betreibst.
 
 ---
 
-## 2. Schritt-für-Schritt Einrichtung in Coolify
+## 1. Was ist im Drive-Stack enthalten?
+
+* **`drive-frontend` (SolidJS Web App):** Dashboards, Routen-Viewer, Video-Player, Live-Karte, GPS-Tracking.
+* **`drive-backend` (Python FastAPI):**
+  * **API Endpoints:** Vollständige Emulation aller Comma/Konik Connect APIs (`/v1/me/devices`, `/v2/pilotpair`, `/v1/devices/{dongle}/stats`, `/v1/devices/{dongle}/location` etc.).
+  * **Athena WebSocket Server (`/ws/v2/{dongle_id}`):** Live-Kommunikation mit dem Comma 4 (Kamera-Snapshots, Remote-Steuerung, Live-Status).
+  * **Lokale Datenbank (SQLite):** Speichert Geräte, Routen, GPS-Historie und Fahrtenstatistiken persistent auf deinem Server.
+  * **Integrierter Video & Log Storage:** Speichert alle Dashcam-Videos und Logs direkt auf deiner Server-Festplatte (kostenlos & ohne Cloud-Abos).
+
+---
+
+## 2. Einrichtung in Coolify (1-Klick Docker Compose)
 
 ### Schritt 1: DNS-Eintrag setzen
 Lege bei deinem Domain-Provider (z. B. Cloudflare, Strato, Hetzner) folgenden DNS A-Record an:
@@ -23,77 +25,53 @@ Lege bei deinem Domain-Provider (z. B. Cloudflare, Strato, Hetzner) folgenden DN
 
 ---
 
-### Schritt 2: Eigene GitHub OAuth App erstellen
-
-Damit der Login auf deiner eigenen Domain funktioniert:
-1. Gehe in deinem GitHub-Account auf: **Settings -> Developer Settings -> OAuth Apps -> New OAuth App** (oder direkt `https://github.com/settings/applications/new`).
-2. Fülle die Felder wie folgt aus:
-   * **Application name:** `Drive`
-   * **Homepage URL:** `https://drive.markenjaden.de`
-   * **Authorization callback URL:** `https://drive.markenjaden.de/auth` (bzw. deine API-Callback-URL)
-3. Klicke auf **Register application**.
-4. Kopiere die generierte **Client ID** (z. B. `Ov23...`).
-5. Klicke auf **Generate a new client secret** und speichere das Secret sicher ab.
-
----
-
-### Schritt 3: Drive Web Frontend in Coolify anlegen
+### Schritt 2: Anwendung in Coolify anlegen
 
 1. Öffne dein **Coolify Dashboard**.
 2. Klicke auf **Projects** -> Wähle oder erstelle ein Projekt (z. B. *"StarPilot Drive"*).
 3. Klicke auf **+ New Resource** -> Wähle **Public Repository** (oder Private GitHub App).
 4. **Repository URL:** `https://github.com/MarkenJaden/Drive`
 5. **Branch:** `master`
-6. **Build Pack:** Wähle **Dockerfile**.
-7. **Domains:** Trage `https://drive.markenjaden.de` ein.
-8. **Port:** `80` (Standard Nginx Port im Dockerfile).
-9. **Environment Variables (in Coolify eintragen):**
-   ```env
-   VITE_API_URL=https://drive.markenjaden.de
-   VITE_ATHENA_URL=wss://drive.markenjaden.de/ws
-   VITE_GITHUB_CLIENT_ID=DEINE_GITHUB_CLIENT_ID
-   ```
-10. Klicke auf **Deploy**. Coolify baut das Docker-Image, generiert das SSL-Zertifikat und schaltet die Seite online!
+6. **Build Pack:** Wähle **Docker Compose**.
+7. **Domains:** Setze für den Frontend-Dienst `https://drive.markenjaden.de`.
+8. Klicke auf **Deploy**.
 
+Coolify startet automatisch beide Container (`drive-frontend` und `drive-backend`), richtet Let's Encrypt SSL ein und verbindet das Frontend mit dem Backend!
 
 ---
 
-### Schritt 4: Storage (MinIO) für Videos & Logs in Coolify bereitstellen
+## 3. Comma 4 mit deinem Server koppeln
 
-1. Klicke im Projekt auf **+ New Resource** -> Wähle **Service**.
-2. Wähle **MinIO** aus dem Service-Katalog.
-3. Vergib ein sicheres Root-Passwort und lege einen Bucket an (z. B. `comma-logs`).
-4. Setze als Domain z. B. `https://storage.markenjaden.de` oder mappe es auf den Server.
-
----
-
-### Schritt 5: StarPilot auf deinem Comma 4 konfigurieren
-
-In StarPilot auf deinem Comma 4 ist `drive.markenjaden.de` bereits als wählbarer Server hinterlegt.
-* Sobald du in StarPilot den Connect-Server auf **Drive (`drive.markenjaden.de`)** stellst, sendet dein Comma 4 alle Fahrten, Videos, Telemetriedaten und Verbrauchsberichte automatisch an deine Coolify-Instanz!
+1. Öffne auf deinem Comma 4 das **Galaxy Dashboard** (z. B. unter `http://192.168.178.83:8082`).
+2. Stelle in **Toggles / Device Settings** den `ConnectServer` auf **`drive` (`drive.markenjaden.de`)**.
+3. Klicke in Galaxy auf **`Gerät koppeln / QR`** ([/pairing](http://192.168.178.83:8082/pairing)).
+4. Öffne [https://drive.markenjaden.de](https://drive.markenjaden.de) auf deinem Smartphone oder PC und scanne den QR-Code bzw. rufe den angezeigten Pairing-Link auf.
+5. Dein Comma 4 verbindet sich sofort live über Athena WebSocket mit deinem Server!
 
 ---
 
-## 3. Manuelle Bereitstellung mit Docker Compose (Alternative)
+## 4. Google Drive Backup / 100TB Cloud-Sync (Optional)
 
-Falls du Coolify mit einer Docker-Compose Datei nutzt:
+Wenn du deine Dashcam-Aufnahmen und Logs zusätzlich auf deinem 100TB Google Drive sichern möchtest:
 
-```yaml
-version: '3.8'
+### 1. `rclone` auf deinem Server installieren
+```bash
+curl https://rclone.org/install.sh | sudo bash
+```
 
-services:
-  drive-web:
-    build:
-      context: https://github.com/MarkenJaden/Drive.git#master
-      dockerfile: Dockerfile
-    container_name: drive_web
-    restart: always
-    environment:
-      - VITE_API_URL=https://drive.markenjaden.de
-      - VITE_ATHENA_URL=wss://drive.markenjaden.de/ws
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.drive.rule=Host(`drive.markenjaden.de`)"
-      - "traefik.http.routers.drive.entrypoints=https"
-      - "traefik.http.routers.drive.tls.certresolver=letsencrypt"
+### 2. Google Drive in `rclone` einrichten
+```bash
+rclone config
+```
+* Wähle `n` für neue Remote, Name z. B. `gdrive`.
+* Wähle `drive` (Google Drive) und folge den Authentifizierungsschritten.
+
+### 3. Sync ausführen oder als Cronjob anlegen
+```bash
+# Manueller Sync
+./scripts/sync_gdrive.sh gdrive comma_recordings
+
+# Oder als täglicher Cronjob (z. B. jeden Tag um 03:00 Uhr)
+crontab -e
+0 3 * * * /var/lib/docker/volumes/drive_drive-data/_data/storage gdrive:comma_recordings --quiet
 ```

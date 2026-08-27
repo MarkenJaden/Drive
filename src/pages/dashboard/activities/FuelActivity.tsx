@@ -52,6 +52,13 @@ const PHASE_LABELS: Record<string, { label: string; icon: string; color: string 
   idle_engine_on: { label: 'Stillstand (Laden/Heizen)', icon: 'settings', color: '#ef4444' },
 }
 
+const fmt = (val: number | undefined | null, digits = 1): string => {
+  if (typeof val === 'number' && !isNaN(val)) {
+    return val.toFixed(digits)
+  }
+  return '0.0'
+}
+
 const FuelActivity: VoidComponent<FuelActivityProps> = (props) => {
   const [device] = createResource(() => props.dongleId, getDevice)
   const [activeTab, setActiveTab] = createSignal<'overview' | 'phases' | 'tank' | 'trips'>('overview')
@@ -133,22 +140,22 @@ const FuelActivity: VoidComponent<FuelActivityProps> = (props) => {
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div class="rounded-lg bg-surface-container p-4 flex flex-col">
               <span class="text-xs text-on-surface-variant flex items-center gap-1"><Icon name="speed" size="16" /> Ø Verbrauch</span>
-              <span class="text-2xl font-extrabold text-primary mt-1">{fuelData()?.tripAvgLPer100km.toFixed(2)} <span class="text-xs font-normal text-on-surface-variant">l/100km</span></span>
+              <span class="text-2xl font-extrabold text-primary mt-1">{fmt(fuelData()?.tripAvgLPer100km, 2)} <span class="text-xs font-normal text-on-surface-variant">l/100km</span></span>
             </div>
 
             <div class="rounded-lg bg-surface-container p-4 flex flex-col">
               <span class="text-xs text-on-surface-variant flex items-center gap-1"><Icon name="eco" size="16" /> EV-Streckenanteil</span>
-              <span class="text-2xl font-extrabold text-green-400 mt-1">{fuelData()?.evDistancePct.toFixed(1)} <span class="text-xs font-normal text-on-surface-variant">%</span></span>
+              <span class="text-2xl font-extrabold text-green-400 mt-1">{fmt(fuelData()?.evDistancePct, 1)} <span class="text-xs font-normal text-on-surface-variant">%</span></span>
             </div>
 
             <div class="rounded-lg bg-surface-container p-4 flex flex-col">
               <span class="text-xs text-on-surface-variant flex items-center gap-1"><Icon name="bolt" size="16" /> Rekuperiert</span>
-              <span class="text-2xl font-extrabold text-cyan-400 mt-1">{fuelData()?.tripRegenKWh.toFixed(2)} <span class="text-xs font-normal text-on-surface-variant">kWh</span></span>
+              <span class="text-2xl font-extrabold text-cyan-400 mt-1">{fmt(fuelData()?.tripRegenKWh, 2)} <span class="text-xs font-normal text-on-surface-variant">kWh</span></span>
             </div>
 
             <div class="rounded-lg bg-surface-container p-4 flex flex-col">
               <span class="text-xs text-on-surface-variant flex items-center gap-1"><Icon name="water_drop" size="16" /> Spritmenge</span>
-              <span class="text-2xl font-extrabold text-on-surface mt-1">{fuelData()?.tripFuelLiters.toFixed(2)} <span class="text-xs font-normal text-on-surface-variant">Liter</span></span>
+              <span class="text-2xl font-extrabold text-on-surface mt-1">{fmt(fuelData()?.tripFuelLiters, 2)} <span class="text-xs font-normal text-on-surface-variant">Liter</span></span>
             </div>
           </div>
 
@@ -157,19 +164,19 @@ const FuelActivity: VoidComponent<FuelActivityProps> = (props) => {
             <div class="rounded-lg bg-surface-container p-5 flex flex-col gap-4">
               <div class="flex justify-between items-center">
                 <h3 class="text-md font-bold">Hybrid-Energieverteilung</h3>
-                <span class="text-xs text-on-surface-variant">{fuelData()?.tripDistanceKm.toFixed(1)} km / {(fuelData()?.tripDurationSeconds! / 60).toFixed(0)} Min.</span>
+                <span class="text-xs text-on-surface-variant">{fmt(fuelData()?.tripDistanceKm, 1)} km / {fmt((fuelData()?.tripDurationSeconds || 0) / 60, 0)} Min.</span>
               </div>
 
               {/* Stacked Progress Bar */}
               <div class="h-5 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
-                <div class="bg-green-500 h-full transition-all" style={{ width: `${fuelData()?.evDistancePct}%` }} title="Rein Elektrisch" />
+                <div class="bg-green-500 h-full transition-all" style={{ width: `${fuelData()?.evDistancePct || 0}%` }} title="Rein Elektrisch" />
                 <div class="bg-orange-500 h-full transition-all" style={{ width: `${100 - (fuelData()?.evDistancePct || 0)}%` }} title="Verbrennungsmotor" />
               </div>
 
               <div class="flex flex-wrap gap-4 text-xs text-on-surface-variant">
-                <div class="flex items-center gap-1.5"><span class="size-3 rounded-full bg-green-500" /> Rein Elektrisch: {fuelData()?.evDistancePct.toFixed(1)}%</div>
-                <div class="flex items-center gap-1.5"><span class="size-3 rounded-full bg-orange-500" /> Verbrenner: {(100 - (fuelData()?.evDistancePct || 0)).toFixed(1)}%</div>
-                <div class="flex items-center gap-1.5"><span class="size-3 rounded-full bg-cyan-400" /> Rekuperation: {fuelData()?.tripRegenKWh.toFixed(2)} kWh</div>
+                <div class="flex items-center gap-1.5"><span class="size-3 rounded-full bg-green-500" /> Rein Elektrisch: {fmt(fuelData()?.evDistancePct, 1)}%</div>
+                <div class="flex items-center gap-1.5"><span class="size-3 rounded-full bg-orange-500" /> Verbrenner: {fmt(100 - (fuelData()?.evDistancePct || 0), 1)}%</div>
+                <div class="flex items-center gap-1.5"><span class="size-3 rounded-full bg-cyan-400" /> Rekuperation: {fmt(fuelData()?.tripRegenKWh, 2)} kWh</div>
               </div>
             </div>
           </Show>
@@ -199,12 +206,12 @@ const FuelActivity: VoidComponent<FuelActivityProps> = (props) => {
                             <span class="inline-block size-2 rounded-full" style={{ 'background-color': meta.color }} />
                             <span class="font-medium">{meta.label}</span>
                           </td>
-                          <td class="py-3 px-1 text-on-surface-variant">{(p.durationSeconds / 60).toFixed(1)} min ({p.timePercent.toFixed(0)}%)</td>
-                          <td class="py-3 px-1">{p.distanceKm.toFixed(1)} km</td>
-                          <td class="py-3 px-1 text-on-surface-variant">{p.avgRpm} U/min</td>
-                          <td class="py-3 px-1">{p.fuelLiters.toFixed(2)} l</td>
-                          <td class="py-3 px-1 font-bold" style={{ color: p.avgLPer100km > 7 ? '#ef4444' : '#4ade80' }}>
-                            {p.avgLPer100km.toFixed(2)} l/100km
+                          <td class="py-3 px-1 text-on-surface-variant">{fmt((p.durationSeconds || 0) / 60, 1)} min ({fmt(p.timePercent, 0)}%)</td>
+                          <td class="py-3 px-1">{fmt(p.distanceKm, 1)} km</td>
+                          <td class="py-3 px-1 text-on-surface-variant">{p.avgRpm || 0} U/min</td>
+                          <td class="py-3 px-1">{fmt(p.fuelLiters, 2)} l</td>
+                          <td class="py-3 px-1 font-bold" style={{ color: (p.avgLPer100km || 0) > 7 ? '#ef4444' : '#4ade80' }}>
+                            {fmt(p.avgLPer100km, 2)} l/100km
                           </td>
                         </tr>
                       )
@@ -234,10 +241,10 @@ const FuelActivity: VoidComponent<FuelActivityProps> = (props) => {
                   <span class="text-green-400 font-bold">Aktiv</span>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 text-xs">
-                  <div><span class="text-on-surface-variant">Gefahren:</span> <strong>{fuelData()?.tripDistanceKm.toFixed(1)} km</strong></div>
-                  <div><span class="text-on-surface-variant">Verbraucht:</span> <strong>{fuelData()?.tripFuelLiters.toFixed(2)} l</strong></div>
-                  <div><span class="text-on-surface-variant">Ø Schnitt:</span> <strong class="text-primary">{fuelData()?.tripAvgLPer100km.toFixed(2)} l/100km</strong></div>
-                  <div><span class="text-on-surface-variant">Kosten (~1.75€):</span> <strong>{((fuelData()?.tripFuelLiters || 0) * 1.75).toFixed(2)} €</strong></div>
+                  <div><span class="text-on-surface-variant">Gefahren:</span> <strong>{fmt(fuelData()?.tripDistanceKm, 1)} km</strong></div>
+                  <div><span class="text-on-surface-variant">Verbraucht:</span> <strong>{fmt(fuelData()?.tripFuelLiters, 2)} l</strong></div>
+                  <div><span class="text-on-surface-variant">Ø Schnitt:</span> <strong class="text-primary">{fmt(fuelData()?.tripAvgLPer100km, 2)} l/100km</strong></div>
+                  <div><span class="text-on-surface-variant">Kosten (~1.75€):</span> <strong>{fmt(((fuelData()?.tripFuelLiters || 0) * 1.75), 2)} €</strong></div>
                 </div>
               </div>
             </div>
@@ -265,10 +272,10 @@ const FuelActivity: VoidComponent<FuelActivityProps> = (props) => {
                     </div>
                     <p class="text-xs text-on-surface-variant mt-1">Tägliche Arbeitsstrecke hin und zurück</p>
                     <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
-                      <div><span class="text-on-surface-variant">Distanz:</span> <strong>{fuelData()?.tripDistanceKm.toFixed(1)} km</strong></div>
-                      <div><span class="text-on-surface-variant">Ø Verbrauch:</span> <strong class="text-primary">{fuelData()?.tripAvgLPer100km.toFixed(2)} l/100km</strong></div>
-                      <div><span class="text-on-surface-variant">EV-Anteil:</span> <strong class="text-green-400">{fuelData()?.evDistancePct.toFixed(1)}%</strong></div>
-                      <div><span class="text-on-surface-variant">Rekuperiert:</span> <strong>{fuelData()?.tripRegenKWh.toFixed(2)} kWh</strong></div>
+                      <div><span class="text-on-surface-variant">Distanz:</span> <strong>{fmt(fuelData()?.tripDistanceKm, 1)} km</strong></div>
+                      <div><span class="text-on-surface-variant">Ø Verbrauch:</span> <strong class="text-primary">{fmt(fuelData()?.tripAvgLPer100km, 2)} l/100km</strong></div>
+                      <div><span class="text-on-surface-variant">EV-Anteil:</span> <strong class="text-green-400">{fmt(fuelData()?.evDistancePct, 1)}%</strong></div>
+                      <div><span class="text-on-surface-variant">Rekuperiert:</span> <strong>{fmt(fuelData()?.tripRegenKWh, 2)} kWh</strong></div>
                     </div>
                   </div>
                 </div>

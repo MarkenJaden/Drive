@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  drive-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://drive.markenjaden.de
+        - VITE_ATHENA_URL=wss://drive.markenjaden.de/ws
+    container_name: drive_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - drive-backend
+    labels:
+      - "coolify.managed=true"
+
+  drive-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: drive_backend
+    restart: unless-stopped
+    environment:
+      - STORAGE_DIR=/data/storage
+      - DB_PATH=/data/drive.db
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - drive-data:/data
+    labels:
+      - "coolify.managed=true"
+
+volumes:
+  drive-data:
+    driver: local
