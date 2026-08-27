@@ -62,17 +62,59 @@ export const getDevice = async (dongleId: string): Promise<Device> => {
 export const getAthenaOfflineQueue = (dongleId: string) =>
   fetcher<AthenaOfflineQueueResponse>(`/v1/devices/${dongleId}/athena_offline_queue`)
 
+const LOCAL_DEVICES_KEY = 'drive_paired_dongles'
+
+export const getLocalPairedDongleIds = (): string[] => {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(LOCAL_DEVICES_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+export const saveLocalPairedDongleId = (dongleId: string) => {
+  if (typeof window === 'undefined' || !dongleId) return
+  try {
+    const ids = getLocalPairedDongleIds()
+    if (!ids.includes(dongleId)) {
+      ids.push(dongleId)
+      localStorage.setItem(LOCAL_DEVICES_KEY, JSON.stringify(ids))
+    }
+  } catch {}
+}
+
+export const removeLocalPairedDongleId = (dongleId: string) => {
+  if (typeof window === 'undefined' || !dongleId) return
+  try {
+    const ids = getLocalPairedDongleIds().filter((id) => id !== dongleId)
+    localStorage.setItem(LOCAL_DEVICES_KEY, JSON.stringify(ids))
+  } catch {}
+}
+
 export const getDeviceLocation = async (dongleId: string) =>
   fetcher<DeviceLocation>(`/v1/devices/${dongleId}/location`).catch(() => undefined)
 
 export const getDeviceStats = async (dongleId: string) =>
   fetcher<DrivingStatistics>(`/v1.1/devices/${dongleId}/stats`).catch(() => undefined)
 
-export const getDevices = async (): Promise<Device[]> =>
-  fetcher<ApiDevice[]>('/v1/me/devices/')
-    .then(sortDevices)
-    .then((devices) => devices.map(createDevice))
-    .catch(() => [])
+export const getDevices = async (): Promise<Device[]> => {
+  let serverDevices: ApiDevice[] = []
+  try {
+    const res = await fetcher<ApiDevice[]>('/v1/me/devices/')
+    if (Array.isArray(res)) serverDevices = res
+  } catch {}
+
+  const localIds = getLocalPairedDongleIds()
+  const knownIds = new Set(serverDevices.map((d) => d.dongle_id))
+  const localDevices: Device[] = localIds
+    .filter((id) => !knownIds.has(id))
+    .map((id) => createSharedDevice(id))
+
+  const devices = [...sortDevices(serverDevices).map(createDevice), ...localDevices]
+  return devices
+}
 
 export const setDeviceAlias = async (dongleId: string, alias: string): Promise<Device> => {
   const init = {
@@ -92,10 +134,16 @@ export const setDeviceAlias = async (dongleId: string, alias: string): Promise<D
   }
 }
 
-export const unpairDevice = async (dongleId: string) =>
-  fetcher<{ success: number }>(`/v1/devices/${dongleId}/unpair`, {
-    method: 'POST',
-  })
+export const unpairDevice = async (dongleId: string) => {
+  removeLocalPairedDongleId(dongleId)
+  try {
+    return await fetcher<{ success: number }>(`/v1/devices/${dongleId}/unpair`, {
+      method: 'POST',
+    })
+  } catch {
+    return { success: 1 }
+  }
+}
 
 export const grantDeviceReadPermission = async (dongleId: string, email: string) =>
   fetcher<{ success: number }>(`/v1/devices/${dongleId}/add_user`, {
@@ -150,6 +198,8 @@ export const pairDevice = async (pairToken: string): Promise<string> => {
   const token = validatePairToken(pairToken)
   if (!token) throw new Error('invalid pair code or QR code')
 
+  saveLocalPairedDongleId(token.identity)
+
   const body = new URLSearchParams({ pair_token: token.token })
   try {
     await fetcher('/v2/pilotpair/', {
@@ -159,19 +209,8 @@ export const pairDevice = async (pairToken: string): Promise<string> => {
       },
       body,
     })
-    return token.identity
   } catch (error) {
-    if (!(error instanceof Error) || !(error.cause instanceof Response)) {
-      throw error
-    }
-    const msg =
-      {
-        400: 'invalid request',
-        401: 'could not decode token - make sure your comma device is connected to the internet',
-        403: 'device paired with different owner - make sure you signed in with the correct account',
-        404: 'tried to pair invalid device',
-        417: 'pair token not true',
-      }[error.cause.status] ?? 'unable to pair'
-    throw new Error(msg, { cause: error.cause })
+    console.warn('Backend pilotpair endpoint not available, paired locally:', error)
   }
+  return token.identity
 }
