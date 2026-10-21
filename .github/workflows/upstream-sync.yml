@@ -1,0 +1,25 @@
+name: Upstream Sync & Validate
+
+on:
+  schedule:
+    # Daily at 04:00 UTC
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+  workflows: write
+
+jobs:
+  sync:
+    uses: MarkenJaden/workflows/.github/workflows/upstream-sync.yml@main
+    with:
+      upstream_repo: 'commaai/connect'
+      upstream_branch: 'master'
+      target_branch: 'master'
+      preflight_command: 'bun run lint'
+      test_command: 'bun run test'
+    secrets: inherit

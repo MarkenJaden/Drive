@@ -1,15 +1,49 @@
-# comma connect
+# MarkenJaden Drive
 
-The web and mobile companion application for [openpilot](https://github.com/commaai/openpilot)
+Self-hosted companion platform for [openpilot](https://github.com/commaai/openpilot) based on [commaai/connect](https://github.com/commaai/connect).
 
-Try it with your openpilot device:
-- **stable:** https://connect.comma.ai
-- **latest:** https://latest.connect-d5y.pages.dev/
+- **Production URL:** [https://drive.markenjaden.de](https://drive.markenjaden.de)
+- **Features:** Self-hosted user login, Two-Factor Authentication (TOTP 2FA), Coolify & Docker Compose support, automated upstream sync with AI conflict resolution, and `graphify` knowledge graph integration.
+
+---
+
+## Deployment
+
+### 1. Coolify (Empfohlen)
+
+Deploye direkt in Coolify mit `docker-compose.coolify.yml`. Coolify belegt die Magic Variables automatisch:
+- `SERVICE_FQDN_DRIVE`: Domain z.B. `drive.markenjaden.de`
+- `SERVICE_PASSWORD_JWT`: Automatisches JWT Secret
+- `SERVICE_PASSWORD_ADMIN`: Generiertes Admin-Passwort
+
+### 2. Standard Docker Compose
+
+```bash
+docker compose up -d
+```
+Besuche anschließend `http://localhost:3000`. Melde dich mit `admin` / `admin123` an und richte dein 2FA-Secret in deiner Authenticator-App (z. B. Google Authenticator) ein.
+
+---
+
+## Upstream Synchronization
+
+Dieses Repository nutzt den zentralen Workflow aus [MarkenJaden/workflows](https://github.com/MarkenJaden/workflows).
+Täglich wird automatisch geprüft, ob `commaai/connect:master` neue Commits hat. Etwaige Merge-Konflikte werden unter Beachtung von `FORK_DIVERGENCES.md` via Google Gemini Hunk-by-Hunk automatisch gelöst, sodass alle Self-Hosted-Funktionen erhalten bleiben.
+
+---
+
+## Token-Optimierung mit Graphify
+
+Dieses Repo enthält einen integrierten Knowledge Graph (`graphify-out/`).
+Vor Code-Recherchen können KI-Agenten den Graphen abfragen (`graphify query "<frage>"`), anstatt viele Quelldateien einzulesen, was den Token-Verbrauch drastisch senkt.
+
+---
 
 ## Development
 * Install bun: https://bun.sh/docs/installation
 * Install dependencies: `bun install`
-* Start dev server: `bun start`
+* Start companion server: `cd server && npm start`
+* Start frontend dev server: `bun start`
 * Demo mode: Navigate to `/demo` to test locally without a comma device.
 
 API and useradmin URL roots can be overridden at build time with

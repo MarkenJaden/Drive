@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_COMMA_URL_ROOT: "/"
+        VITE_ATHENA_URL_ROOT: "/athena/"
+        VITE_BILLING_URL_ROOT: "/v1/prime/"
+        VITE_USERADMIN_URL_ROOT: "/v1/me/"
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      - PORT=4000
+      - JWT_SECRET=${JWT_SECRET:-markenjaden-drive-super-secret-key-32b}
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - REQUIRE_2FA=${REQUIRE_2FA:-true}
+    volumes:
+      - drive_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  drive_data:

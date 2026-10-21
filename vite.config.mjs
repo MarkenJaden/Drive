@@ -50,6 +50,22 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/athena/, ''),
         },
+        '/api': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
+        '/v1': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
+        '/v1.1': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
+        '/v2': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
       },
     },
     build: {

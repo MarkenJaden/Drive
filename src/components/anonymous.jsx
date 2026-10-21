@@ -1,5 +1,5 @@
 /* global AppleID */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import { config as AuthConfig } from '@commaai/my-comma-auth';
 
 import { AuthAppleIcon, AuthGithubIcon, AuthGoogleIcon } from '../icons';
 import { stringifyQuery } from '../utils/query';
+import SelfHostedLogin from './SelfHostedLogin';
 
 const AUTH_PROVIDERS = { GOOGLE: 'g', APPLE: 'a', GITHUB: 'h' };
 
@@ -20,12 +21,12 @@ const styles = () => ({
     background: '#ffffff',
     display: 'flex',
     borderRadius: 80,
-    height: 80,
+    height: 60,
     justifyContent: 'center',
     textDecoration: 'none',
-    width: 400,
+    width: 360,
     maxWidth: '90%',
-    marginBottom: 10,
+    marginBottom: 8,
     '&:hover': {
       background: '#eee',
     },
@@ -48,6 +49,8 @@ const styles = () => ({
 });
 
 const AnonymousLanding = ({ classes, pathname }) => {
+  const [showLegacyOAuth, setShowLegacyOAuth] = useState(true);
+
   useEffect(() => {
     if (typeof window.sessionStorage !== 'undefined') {
       const q = new URLSearchParams(window.location.search);
@@ -86,41 +89,60 @@ const AnonymousLanding = ({ classes, pathname }) => {
   const lastLoginProvider = localStorage.getItem('lastLoginProvider');
 
   return (
-    <div className="flex flex-col justify-center h-screen">
-      <div className="flex flex-col items-center overflow-y-auto p-[20px]">
-        <div className="flex h-21 w-21 shrink-0 items-center justify-center rounded-2xl bg-[#1e2224]">
-          <img alt="comma" src="/images/comma-white.png" className="h-[45px]" />
+    <div className="flex flex-col justify-center min-h-screen py-8">
+      <div className="flex flex-col items-center overflow-y-auto px-4 max-w-xl mx-auto w-full">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-[#1e2224] shadow-lg mb-4">
+          <img alt="comma" src="/images/comma-white.png" className="h-[42px]" />
         </div>
-        <div className="h-[60px] shrink-[2]" />
-        <Typography className="text-center text-[36px] font-extrabold">comma connect</Typography>
-        <Typography className="mt-[10px] mb-[30px] w-[380px] max-w-[90%] text-center text-[18px]">
-          Manage your comma device, view your drives, and use comma prime features
+        <Typography className="text-center text-3xl font-extrabold tracking-tight">MarkenJaden Drive</Typography>
+        <Typography className="mt-2 mb-6 text-center text-base text-gray-400 max-w-sm">
+          Self-hosted openpilot companion platform mit Zwei-Faktor-Authentifizierung (2FA)
         </Typography>
-        <a href={AuthConfig.GOOGLE_REDIRECT_LINK} className={classes.logInButton}>
-          <img className="h-10" src={AuthGoogleIcon} alt="" />
-          <Typography className="w-[190px] whitespace-nowrap text-center text-[18px] font-semibold text-black">
-            Sign in with Google
-          </Typography>
-          {lastLoginProvider === AUTH_PROVIDERS.GOOGLE && <span className={classes.lastUsed}>Last used</span>}
-        </a>
-        <a onClick={() => AppleID.auth.signIn()} className={classes.logInButton}>
-          <img className="h-10" src={AuthAppleIcon} alt="" />
-          <Typography className="w-[190px] whitespace-nowrap text-center text-[18px] font-semibold text-black">
-            Sign in with Apple
-          </Typography>
-          {lastLoginProvider === AUTH_PROVIDERS.APPLE && <span className={classes.lastUsed}>Last used</span>}
-        </a>
-        <a href={AuthConfig.GITHUB_REDIRECT_LINK} className={`${classes.logInButton} githubAuth`}>
-          <img className="h-10" src={AuthGithubIcon} alt="" />
-          <Typography className="w-[190px] whitespace-nowrap text-center text-[18px] font-semibold text-black">
-            Sign in with GitHub
-          </Typography>
-          {lastLoginProvider === AUTH_PROVIDERS.GITHUB && <span className={classes.lastUsed}>Last used</span>}
-        </a>
 
-        <span className="max-w-sm text-center mt-2 mb-8 text-sm">
-          Make sure to sign in with the same account if you have previously
-          paired your comma device.
+        <div className="w-full mb-6">
+          <SelfHostedLogin />
+        </div>
+
+        <div className="w-full flex items-center gap-3 my-4">
+          <div className="h-px bg-gray-800 flex-1" />
+          <button
+            type="button"
+            onClick={() => setShowLegacyOAuth(!showLegacyOAuth)}
+            className="text-xs text-gray-400 hover:text-white transition uppercase tracking-wider"
+          >
+            {showLegacyOAuth ? '▲ Externe Logins ausblenden' : '▼ Mit externem Account anmelden'}
+          </button>
+          <div className="h-px bg-gray-800 flex-1" />
+        </div>
+
+        {showLegacyOAuth && (
+          <div className="flex flex-col items-center w-full mt-2 animate-fadeIn">
+            <a href={AuthConfig.GOOGLE_REDIRECT_LINK} className={classes.logInButton}>
+              <img className="h-8" src={AuthGoogleIcon} alt="" />
+              <Typography className="w-[190px] whitespace-nowrap text-center text-[16px] font-semibold text-black">
+                Sign in with Google
+              </Typography>
+              {lastLoginProvider === AUTH_PROVIDERS.GOOGLE && <span className={classes.lastUsed}>Last used</span>}
+            </a>
+            <a onClick={() => AppleID.auth.signIn()} className={classes.logInButton}>
+              <img className="h-8" src={AuthAppleIcon} alt="" />
+              <Typography className="w-[190px] whitespace-nowrap text-center text-[16px] font-semibold text-black">
+                Sign in with Apple
+              </Typography>
+              {lastLoginProvider === AUTH_PROVIDERS.APPLE && <span className={classes.lastUsed}>Last used</span>}
+            </a>
+            <a href={AuthConfig.GITHUB_REDIRECT_LINK} className={`${classes.logInButton} githubAuth`}>
+              <img className="h-8" src={AuthGithubIcon} alt="" />
+              <Typography className="w-[190px] whitespace-nowrap text-center text-[16px] font-semibold text-black">
+                Sign in with GitHub
+              </Typography>
+              {lastLoginProvider === AUTH_PROVIDERS.GITHUB && <span className={classes.lastUsed}>Last used</span>}
+            </a>
+          </div>
+        )}
+
+        <span className="max-w-sm text-center mt-6 text-xs text-gray-500">
+          Self-hosted unter drive.markenjaden.de &bull; Geschützt durch TOTP 2FA
         </span>
       </div>
     </div>
