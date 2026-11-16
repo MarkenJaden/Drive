@@ -100,6 +100,17 @@ export function getDevice(dongleId) {
   return devices.find((d) => d.dongle_id === dongleId) || null;
 }
 
+export function getDeviceBySerialOrKey(serial, publicKey) {
+  const devices = readJson(DEVICES_FILE, []);
+  return (
+    devices.find(
+      (d) =>
+        (serial && d.serial && d.serial === serial) ||
+        (publicKey && d.public_key && d.public_key === publicKey)
+    ) || null
+  );
+}
+
 export function saveDevice(device) {
   const devices = readJson(DEVICES_FILE, []);
   const idx = devices.findIndex((d) => d.dongle_id === device.dongle_id);

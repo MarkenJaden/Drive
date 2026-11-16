@@ -28,7 +28,7 @@ services:
       - ADMIN_USER=${ADMIN_USER:-admin}
       - ADMIN_PASSWORD=${SERVICE_PASSWORD_ADMIN:-$SERVICE_PASSWORD}
       - REQUIRE_2FA=${REQUIRE_2FA:-true}
-      - APP_URL=https://${SERVICE_FQDN_DRIVE:-drive.markenjaden.de}
+      - APP_URL=https://${SERVICE_FQDN_WEB:-drive.markenjaden.de}
     volumes:
       - drive_data:/app/data
     restart: unless-stopped

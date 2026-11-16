@@ -1,4 +1,6 @@
 import http from 'http';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { authenticator } from 'otplib';
 
 process.env.DATA_DIR = './test-data';
@@ -91,6 +93,26 @@ async function runTests() {
     body: { username: 'admin', password: 'password123', code: authenticator.generate(secret) },
   });
   console.log('7. Subsequent login with TOTP code succeeds:', !!loginWith2fa.data.access_token ? 'PASS' : 'FAIL');
+
+  // 8. IoniqPilot device registration (/v2/pilotauth/) & device JWT auth
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 2048,
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+  });
+  const registerToken = jwt.sign({ register: true }, privateKey, { algorithm: 'RS256', expiresIn: '1h' });
+  const pilotAuth = await request(
+    `/v2/pilotauth/?serial=ioniq-test-01&public_key=${encodeURIComponent(publicKey)}&register_token=${encodeURIComponent(registerToken)}`,
+    { method: 'POST' }
+  );
+  const validDongle = typeof pilotAuth.data?.dongle_id === 'string' && /^[a-f0-9]{16}$/.test(pilotAuth.data.dongle_id);
+  console.log('8. IoniqPilot /v2/pilotauth/ returns 16-hex dongle_id:', validDongle ? 'PASS' : 'FAIL');
+
+  const deviceJwt = jwt.sign({ identity: pilotAuth.data.dongle_id }, privateKey, { algorithm: 'RS256', expiresIn: '1h' });
+  const devInfo = await request(`/v1.1/devices/${pilotAuth.data.dongle_id}/`, {
+    headers: { Authorization: `JWT ${deviceJwt}` },
+  });
+  console.log('9. Device RSA JWT authenticates against API:', devInfo.data?.dongle_id === pilotAuth.data.dongle_id ? 'PASS' : 'FAIL');
 
   console.log('--- All companion API tests passed! ---');
   process.exit(0);

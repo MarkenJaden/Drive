@@ -38,6 +38,8 @@ The following files and directories are unique to this fork and must never be de
   - `/v1/` -> `http://api:4000/v1/`
   - `/v1.1/` -> `http://api:4000/v1.1/`
   - `/v2/` -> `http://api:4000/v2/`
+  - `/athena/` -> `http://api:4000/athena/`
+  - `/ws/` -> `http://api:4000/ws/` (with WebSocket Upgrade headers)
 - SPA fallback routing (`try_files $uri /index.html =404;`) must remain intact.
 
 ### `vite.config.mjs`

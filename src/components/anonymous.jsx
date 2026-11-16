@@ -49,7 +49,7 @@ const styles = () => ({
 });
 
 const AnonymousLanding = ({ classes, pathname }) => {
-  const [showLegacyOAuth, setShowLegacyOAuth] = useState(true);
+  const [showLegacyOAuth, setShowLegacyOAuth] = useState(false);
 
   useEffect(() => {
     if (typeof window.sessionStorage !== 'undefined') {

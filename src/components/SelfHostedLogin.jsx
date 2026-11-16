@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { storage as AuthStorage } from '@commaai/my-comma-auth';
 
 export default function SelfHostedLogin({ onLoginSuccess }) {
   const [step, setStep] = useState('login'); // 'login' | '2fa_code' | '2fa_setup'
@@ -118,7 +119,7 @@ export default function SelfHostedLogin({ onLoginSuccess }) {
   };
 
   const finishLogin = (token) => {
-    localStorage.setItem('authorization', token);
+    AuthStorage.setCommaAccessToken(token);
     localStorage.setItem('lastLoginProvider', 'self-hosted');
     if (onLoginSuccess) {
       onLoginSuccess(token);

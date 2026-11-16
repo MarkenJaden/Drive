@@ -5,13 +5,18 @@ on:
     # Daily at 04:00 UTC
     - cron: '0 4 * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Validate merge and checks without pushing or opening PRs/issues'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
   pull-requests: write
   issues: write
   actions: write
-  workflows: write
 
 jobs:
   sync:
@@ -20,6 +25,17 @@ jobs:
       upstream_repo: 'commaai/connect'
       upstream_branch: 'master'
       target_branch: 'master'
-      preflight_command: 'bun run lint'
+      python_version: '3.12'
+      submodules: 'false'
+      workflow_sync_policy: 'preserve_if_no_pat'
+      dry_run: ${{ inputs.dry_run || false }}
+      preflight_command: >
+        if ! command -v bun >/dev/null 2>&1; then
+          curl -fsSL https://bun.sh/install | bash &&
+          echo "$HOME/.bun/bin" >> "$GITHUB_PATH" &&
+          export PATH="$HOME/.bun/bin:$PATH";
+        fi &&
+        bun install --frozen-lockfile &&
+        bun run lint
       test_command: 'bun run test'
     secrets: inherit
