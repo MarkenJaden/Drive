@@ -237,7 +237,7 @@ describe('whole-app behavior', () => {
     ['private device', `/${FIRST}`], ['Prime', `/${FIRST}/prime`], ['stream', `/${FIRST}/stream`],
   ])('signed-out %s entry retains its path', async (_name, pathname) => {
     const { history } = await renderApp(pathname, { authenticated: false });
-    expect(await screen.findByText('Sign in with Google')).toBeVisible();
+    expect(await screen.findByText('Self-Hosted Login')).toBeVisible();
     expect(history.location.pathname).toBe(pathname);
   });
 
