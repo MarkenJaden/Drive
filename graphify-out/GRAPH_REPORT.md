@@ -1,318 +1,416 @@
-# Graph Report - beautiful-nobel  (2026-10-22)
+# Graph Report - Drive  (2026-11-20)
 
 ## Corpus Check
-- 124 files · ~209,735 words
+- 140 files · ~78,746 words
 - Verdict: corpus is large enough that graph structure adds value.
+- Unclassified: 12 file(s) not represented in the graph (top: (none) 6, .ico 2, .template 1)
 
 ## Summary
-- 1064 nodes · 2257 edges · 66 communities (46 shown, 20 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.51)
+- 1450 nodes · 3284 edges · 79 communities (66 shown, 13 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 83 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2c5b5590`
+- Built from commit: `01322c4c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Community 0
-- Community 1
-- Community 2
-- Community 3
-- Community 4
-- Community 5
-- Community 6
-- Community 7
-- Community 8
-- Community 9
-- Community 10
-- Community 11
-- Community 12
-- Community 13
-- Community 14
-- Community 15
-- Community 16
-- Community 17
-- Community 18
-- Community 19
-- Community 20
-- Community 21
-- Community 22
-- Community 23
-- Community 24
-- Community 25
-- Community 26
-- Community 27
-- Community 28
-- Community 29
-- Community 30
-- Community 31
-- Community 32
-- Community 33
-- Community 34
-- Community 35
-- Community 36
-- Community 37
-- Community 38
-- Community 39
-- Community 40
-- Community 41
-- Community 42
-- Community 43
-- Community 46
-- Community 49
-- Community 50
-- Community 51
-- Community 52
-- Community 53
-- Community 54
-- Community 55
-- Community 56
-- Community 57
-- Community 58
-- Community 59
-- Community 60
-- Community 61
-- Community 62
-- Community 63
-- Community 64
-- Community 65
-- Community 66
-- Community 67
-- Community 68
+- actions/index.js
+- ApiRequest
+- PrimeManage.jsx
+- dependencies
+- BodyTeleop/index.jsx
+- WebRTCConnection
+- icons/index.jsx
+- ClipMenu.jsx
+- build-gallery.mjs
+- rules
+- analyticsEvent
+- @material-ui/core
+- backend.js
+- utils/index.js
+- DriveVideo/index.jsx
+- server/package.json
+- Navigation
+- cached.js
+- Timeline
+- db.js
+- clips.js
+- with
+- devDependencies
+- explorer.jsx
+- files.js
+- store.js
+- with
+- IoniqPanel/index.jsx
+- AddDevice
+- MarkenJaden Drive
+- storage.js
+- AppHeader/index.jsx
+- icons/index.jsx
+- DeviceInfo/index.jsx
+- package.json
+- scripts
+- manifest.json
+- RTK - Rust Token Killer (Google Antigravity)
+- Agent Guidelines for MarkenJaden Drive
+- types.js
+- server/index.js
+- steps
+- with
+- createDriveServer
+- web
+- Navigation/index.jsx
+- UploadQueue
+- react
+- args
+- App.jsx
+- args
+- TimeDisplay
+- WebRTCConnectionManager
+- live.sh
+- playback.js
+- history.js
+- Timeline/index.jsx
+- latency-transform-worker.js
+- deploy-preview.sh
+- Referrals/index.jsx
+- vite.config.mjs
+- build.sh
+- logs.sh
+- start.sh
+- stop.sh
+- globalState.js
+- vitest
+- IosPwaPopup
+- TimeSelect/index.jsx
+- DeviceSettingsModal
+- App.test.jsx
+- 2. Invariants in Shared Files
+- PrimeCheckout
+- PrimeManage
+- App
+- backend.js
+- DeviceList
+- history.test.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `react` - 47 edges
-2. `rules` - 28 edges
-3. `analyticsEvent()` - 24 edges
-4. `Media` - 23 edges
-5. `Navigation` - 22 edges
-6. `selectDevice()` - 21 edges
-7. `Colors` - 21 edges
-8. `deviceIsOnline()` - 21 edges
-9. `WebRTCConnection` - 21 edges
-10. `WebRTCConnectionManager` - 19 edges
+1. `react` - 52 edges
+2. `createDriveServer()` - 50 edges
+3. `@material-ui/core` - 36 edges
+4. `react-redux` - 30 edges
+5. `rules` - 28 edges
+6. `Media` - 24 edges
+7. `analyticsEvent()` - 24 edges
+8. `Navigation` - 23 edges
+9. `WebRTCConnection` - 22 edges
+10. `selectDevice()` - 21 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `createAppStore()` --references--> `redux`  [EXTRACTED]
-  src/store.js → package.json
-- `fetchCoord()` --indirect_call--> `location()`  [INFERRED]
-  src/actions/cached.js → src/actions/history.test.js
-- `DriveListItem()` --calls--> `fetchEvents()`  [EXTRACTED]
-  src/components/Dashboard/DriveListItem.jsx → src/actions/cached.js
-- `DriveListItem()` --calls--> `fetchLocations()`  [EXTRACTED]
-  src/components/Dashboard/DriveListItem.jsx → src/actions/cached.js
-- `athenaCall()` --references--> `athena`  [EXTRACTED]
-  src/actions/files.js → src/api.js
+- ``src/components/Dashboard/index.jsx` & `DriveListItem.jsx`` --references--> `Dashboard()`  [INFERRED]
+  FORK_DIVERGENCES.md → src/components/Dashboard/index.jsx
+- ``src/components/Dashboard/index.jsx` & `DriveListItem.jsx`` --references--> `DriveListItem()`  [INFERRED]
+  FORK_DIVERGENCES.md → src/components/Dashboard/DriveListItem.jsx
+- `createRealBackend()` --indirect_call--> `logOut()`  [INFERRED]
+  src/api/backend.js → src/utils/auth.js
+- `create()` --calls--> `onHistoryMiddleware()`  [EXTRACTED]
+  src/actions/history.test.js → src/actions/history.js
+- `createAppStore()` --indirect_call--> `onHistoryMiddleware()`  [INFERRED]
+  src/store.js → src/actions/history.js
 
 ## Import Cycles
 - 4-file cycle: `src/analytics.js -> src/utils/index.js -> src/timeline/index.js -> src/store.js -> src/analytics.js`
 - 4-file cycle: `src/reducers/index.js -> src/timeline/playback.js -> src/timeline/index.js -> src/store.js -> src/reducers/index.js`
-- 5-file cycle: `src/reducers/globalState.js -> src/utils/index.js -> src/timeline/index.js -> src/store.js -> src/reducers/index.js -> src/reducers/globalState.js`
 - 5-file cycle: `src/actions/history.js -> src/actions/index.js -> src/timeline/playback.js -> src/timeline/index.js -> src/store.js -> src/actions/history.js`
 - 5-file cycle: `src/actions/history.js -> src/actions/index.js -> src/utils/index.js -> src/timeline/index.js -> src/store.js -> src/actions/history.js`
+- 5-file cycle: `src/reducers/globalState.js -> src/utils/index.js -> src/timeline/index.js -> src/store.js -> src/reducers/index.js -> src/reducers/globalState.js`
 
-## Communities (66 total, 20 thin omitted)
+## Communities (79 total, 13 thin omitted)
 
-### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (42): checkLastRoutesData(), checkRoutesData(), currentPathname(), fetchDeviceOnline(), fetchSharedDevice(), popTimelineRange(), primeFetchSubscription(), primeNav() (+34 more)
-
-### Community 1 - "Community 1"
-Cohesion: 0.06
-Nodes (37): coordsRequests, driveCoordsRequests, eventsRequests, expireCacheItems(), fetchCoord(), fetchDriveCoords(), fetchEvents(), fetchLocations() (+29 more)
-
-### Community 2 - "Community 2"
-Cohesion: 0.10
-Nodes (10): primeGetSubscription(), billing, PrimeCheckout, PrimeManage, primeSwitchErrorMessage(), otherPrimePlan(), primePlanName(), PriorityHighIcon() (+2 more)
-
-### Community 3 - "Community 3"
-Cohesion: 0.05
-Nodes (41): barcode-detector, @commaai/my-comma-auth, connected-react-router, dayjs, history, jwt-decode, localforage, mapbox-gl (+33 more)
-
-### Community 4 - "Community 4"
-Cohesion: 0.14
-Nodes (18): QUALITY_OPTIONS, SettingsMenu(), drawLatencyGraph(), INITIAL_LATENCY, LATENCY_LAYERS, QUALITY_INDICATOR, readRtt(), STATS_ROWS (+10 more)
-
-### Community 5 - "Community 5"
-Cohesion: 0.11
-Nodes (6): fetchTurnCredentials(), getTurnCredentials(), stripMdnsCandidates(), wallMs(), WebRTCConnection, WebRTCConnectionManager
-
-### Community 6 - "Community 6"
+### Community 0 - "actions/index.js"
 Cohesion: 0.15
-Nodes (18): ErrorFallback(), timerSteps, AddCircleOutlineIcon(), Check(), ChevronIcon(), chevronPath(), ContentCopy(), DownArrow (+10 more)
+Nodes (22): connected-react-router, checkLastRoutesData(), checkRoutesData(), currentPathname(), fetchDeviceOnline(), fetchSharedDevice(), popTimelineRange(), primeFetchSubscription() (+14 more)
 
-### Community 7 - "Community 7"
-Cohesion: 0.11
-Nodes (20): CAMERAS, ControlsBar(), ACTIVE_STATUSES, BITRATES, cameraCoversRange(), CAMERAS, ClipMenu, defaultFilename() (+12 more)
+### Community 1 - "ApiRequest"
+Cohesion: 0.25
+Nodes (3): ApiRequest, getCached(), RequestError
 
-### Community 8 - "Community 8"
-Cohesion: 0.14
+### Community 2 - "PrimeManage.jsx"
+Cohesion: 0.32
+Nodes (6): primeSwitchErrorMessage(), otherPrimePlan(), primePlanName(), PriorityHighIcon(), deviceNamePretty(), deviceTypePretty()
+
+### Community 3 - "dependencies"
+Cohesion: 0.08
+Nodes (24): dependencies, barcode-detector@^3.0.8, @commaai/my-comma-auth@^1.4.1, connected-react-router@^4.5.0, dayjs@^1.11.9, jwt-decode@^3.1.2, localforage@^1.10.0, mapbox-gl@^1.13.3 (+16 more)
+
+### Community 4 - "BodyTeleop/index.jsx"
+Cohesion: 0.07
+Nodes (42): fetchDeviceNotCar(), CAMERAS, ControlsBar(), BodyTeleop(), ControllerOverlay(), Joystick(), TouchJoystick(), TriggerGroup() (+34 more)
+
+### Community 5 - "WebRTCConnection"
+Cohesion: 0.20
+Nodes (3): stripMdnsCandidates(), wallMs(), WebRTCConnection
+
+### Community 6 - "icons/index.jsx"
+Cohesion: 0.29
+Nodes (8): timerSteps, DownArrow, Forward10(), Pause(), PlayArrow(), Replay10(), VolumeOff(), VolumeUp()
+
+### Community 7 - "ClipMenu.jsx"
+Cohesion: 0.09
+Nodes (18): ACTIVE_STATUSES, BITRATES, cameraCoversRange(), CAMERAS, ClipMenu, defaultFilename(), deviceRouteName(), formatDuration() (+10 more)
+
+### Community 8 - "build-gallery.mjs"
+Cohesion: 0.10
 Nodes (31): assertNotBlank(), buildRenderer(), buildReport(), captureFilename(), captureOne(), captureRenderers(), clickGalleryAction(), compareImages() (+23 more)
 
-### Community 9 - "Community 9"
-Cohesion: 0.08
-Nodes (26): rules, class-methods-use-this, default-case, import/namespace, import/no-named-as-default, import/prefer-default-export, no-await-in-loop, no-case-declarations (+18 more)
-
-### Community 10 - "Community 10"
-Cohesion: 0.14
-Nodes (5): fetchUploadUrls(), analyticsEvent(), Media, deviceIsOnline(), deviceOnCellular()
-
-### Community 11 - "Community 11"
-Cohesion: 0.12
-Nodes (6): react, Colors, initialState, InfoOutline(), KeyboardBackspaceIcon(), PinCarIcon()
-
-### Community 12 - "Community 12"
-Cohesion: 0.22
-Nodes (12): createRealBackend(), initBackend(), selectBackendType(), createDemoBackend(), DEMO_DEVICE, DEMO_PROFILE, demoRouteIndex(), demoRouteLogId() (+4 more)
-
-### Community 13 - "Community 13"
-Cohesion: 0.60
-Nodes (3): getWindowSize(), subscribeWindowSize(), useWindowSize()
-
-### Community 14 - "Community 14"
-Cohesion: 0.08
-Nodes (15): debounceLeading(), DriveVideo, getVideoState(), TODO: figure out why the src isn't set properly, TODO: fix iOS bug where video doesn't stop buffering while paused, IosPwaPopup, Referrals(), referralSteps (+7 more)
-
-### Community 15 - "Community 15"
-Cohesion: 0.10
-Nodes (20): bcryptjs, cors, express, jsonwebtoken, otplib, qrcode, dependencies, bcryptjs (+12 more)
-
-### Community 18 - "Community 18"
+### Community 9 - "rules"
 Cohesion: 0.05
-Nodes (18): ExplorerApp, TimeDisplay, AlertStatusCodes, percentFromPointerEvent(), Timeline, mockRoute, percentToOffsetMock, thumbnailBounds (+10 more)
+Nodes (43): categories, correctness, env, browser, es6, node, vitest, globals (+35 more)
 
-### Community 19 - "Community 19"
-Cohesion: 0.25
-Nodes (15): deleteDevice(), DEVICES_FILE, ensureDirectoryExists(), getDevice(), getDevices(), getUserById(), getUserByUsername(), getUsers() (+7 more)
+### Community 10 - "analyticsEvent"
+Cohesion: 0.13
+Nodes (4): updateRoute(), Media, ShareIcon(), WarningIcon()
 
-### Community 20 - "Community 20"
-Cohesion: 0.09
-Nodes (17): fetchDeviceNotCar(), athena, activeDownloads, cacheKey(), call(), CLIP_RETRY_DELAYS, clipDevice, clipStorage (+9 more)
-
-### Community 22 - "Community 22"
+### Community 11 - "@material-ui/core"
 Cohesion: 0.12
-Nodes (17): jsdom, oxlint, devDependencies, jsdom, oxlint, @tailwindcss/vite, @testing-library/jest-dom, @testing-library/react (+9 more)
+Nodes (7): @material-ui/core, @sentry/react, updateDevice(), billing, Colors, COMMACARE_URL, initialState
 
-### Community 23 - "Community 23"
+### Community 12 - "backend.js"
 Cohesion: 0.15
-Nodes (7): updateDevices(), api, FIXME: end time not always same day as start time, NoDeviceUpsell(), emptyDevice, pairErrorToMessage(), verifyPairToken()
+Nodes (18): createDemoBackend(), fetchPublicFiles(), fetchPublicRoute(), getDemoRouteFiles(), listDemoRoutes(), missingAssetUrl(), routeAsset(), DEMO_DEVICE (+10 more)
 
-### Community 24 - "Community 24"
-Cohesion: 0.29
-Nodes (15): athenaCall(), cancelFetchUploadQueue(), cancelUploads(), doUpload(), fetchAthenaQueue(), fetchFiles(), fetchUploadQueue(), pathToFileName() (+7 more)
+### Community 13 - "utils/index.js"
+Cohesion: 0.24
+Nodes (6): Thumbnails(), hasRoutesData(), routes, SEGMENT_LENGTH, deviceVersionAtLeast(), getSegmentNumber()
 
-### Community 25 - "Community 25"
+### Community 14 - "DriveVideo/index.jsx"
+Cohesion: 0.15
+Nodes (7): debounceLeading(), DriveVideo, getVideoState(), VideoOverlay(), bufferVideo(), isFirefox(), isIos()
+
+### Community 15 - "server/package.json"
+Cohesion: 0.09
+Nodes (22): bcryptjs, cors, express, jsonwebtoken, otplib, qrcode, ws, dependencies (+14 more)
+
+### Community 16 - "Navigation"
+Cohesion: 0.08
+Nodes (6): Navigation, formatPlaceAddress(), formatPlaceName(), VisibilityHandler, PinCarIcon(), timeFromNow()
+
+### Community 17 - "cached.js"
 Cohesion: 0.06
-Nodes (44): vitest, onHistoryMiddleware(), baseState, create(), location(), analyticsMiddleware(), attachRelTime(), clusterMap (+36 more)
+Nodes (29): coordsRequests, driveCoordsRequests, eventsRequests, expireCacheItems(), fetchCoord(), fetchDriveCoords(), fetchEvents(), fetchLocations() (+21 more)
 
-### Community 26 - "Community 26"
-Cohesion: 0.23
-Nodes (6): BodyTeleop(), Joystick(), computeIsLandscape(), getOrientationSource(), useIsLandscape(), ArrowBackBold()
+### Community 19 - "db.js"
+Cohesion: 0.32
+Nodes (16): deleteDevice(), ensureDirectoryExists(), getDataDir(), getDevice(), getDeviceBySerialOrKey(), getDevices(), getDevicesFile(), getUserById() (+8 more)
 
-### Community 27 - "Community 27"
+### Community 20 - "clips.js"
 Cohesion: 0.20
-Nodes (9): 1. Protected Files & Directories (Fork-Specific), 2. Invariants in Shared Files, 3. Conflict Resolution Strategy, `Dockerfile`, Fork Divergences & Architecture Invariants, `nginx.conf`, `src/api.js`, `src/components/anonymous.jsx` (+1 more)
+Nodes (13): activeDownloads, cacheKey(), call(), CLIP_RETRY_DELAYS, clipDevice, clipStorage, deviceSupportsClips(), downloadClip() (+5 more)
 
-### Community 29 - "Community 29"
+### Community 21 - "with"
+Cohesion: 0.05
+Nodes (39): if, needs, permissions, runs-on, steps, timeout-minutes, DOCKER_METADATA_PR_HEAD_SHA, jobs (+31 more)
+
+### Community 22 - "devDependencies"
+Cohesion: 0.12
+Nodes (17): devDependencies, jsdom@^26.1.0, oxlint@^1.73.0, tailwindcss@^4, @tailwindcss/typography@^0.5.20, @testing-library/jest-dom@^6.6.3, vitest@^3.2.7, @vitest/coverage-v8@^3.2.7 (+9 more)
+
+### Community 23 - "explorer.jsx"
+Cohesion: 0.10
+Nodes (11): localforage, analyticsEvent(), updateDevices(), api, AppDrawer(), listener(), NoDeviceUpsell(), ExplorerApp (+3 more)
+
+### Community 24 - "files.js"
+Cohesion: 0.22
+Nodes (16): athenaCall(), cancelUploads(), doUpload(), fetchAthenaQueue(), fetchFiles(), fetchUploadQueue(), fetchUploadUrls(), FILE_NAMES (+8 more)
+
+### Community 25 - "store.js"
+Cohesion: 0.24
+Nodes (9): redux, analyticsMiddleware(), attachRelTime(), clusterMap, getPageViewEventLocation(), getVideoPercent(), logAction(), composeEnhancers (+1 more)
+
+### Community 26 - "with"
+Cohesion: 0.06
+Nodes (36): jobs, preview, preview-master, name, on, workflow_run, permissions, contents (+28 more)
+
+### Community 27 - "IoniqPanel/index.jsx"
+Cohesion: 0.24
+Nodes (14): downloadDeviceLog(), fetchDeviceLogs(), fetchIoniqOverview(), fetchIoniqRecording(), logDriveRefuel(), badgeTone(), downloadTextFile(), fmtDuration() (+6 more)
+
+### Community 29 - "MarkenJaden Drive"
 Cohesion: 0.20
 Nodes (9): 1. Coolify (Empfohlen), 2. Standard Docker Compose, Contributing, Deployment, Development, Libraries Used, MarkenJaden Drive, Token-Optimierung mit Graphify (+1 more)
 
-### Community 30 - "Community 30"
-Cohesion: 0.39
-Nodes (5): Video(), RefreshIcon(), distance(), midpoint(), usePinchZoom()
+### Community 30 - "storage.js"
+Cohesion: 0.18
+Nodes (32): addDriveRefuel(), appendSwaglogs(), assertSafeDongleId(), ensureDir(), getDeviceLogs(), getDeviceStats(), getFirehoseCount(), getIoniqFile() (+24 more)
 
-### Community 31 - "Community 31"
-Cohesion: 0.09
-Nodes (10): AccountMenu(), logOut(), AppHeader(), DeviceList, InfoTooltip, AccountIcon(), GiftIcon(), GiftOpenIcon() (+2 more)
+### Community 31 - "AppHeader/index.jsx"
+Cohesion: 0.10
+Nodes (35): AccountMenu(), logOutAndRedirect(), Version(), AppHeader(), syncPushSubscription(), NotificationsDialog(), getSteps(), NotificationsHelpDialog() (+27 more)
 
-### Community 32 - "Community 32"
+### Community 32 - "icons/index.jsx"
 Cohesion: 0.15
-Nodes (7): FILE_NAMES, updateRoute(), initialState, MediaType, SaveIcon(), ShareIcon(), WarningIcon()
+Nodes (12): ErrorFallback(), CameraIcon(), CarBatteryIcon(), Check(), ChevronIcon(), chevronPath(), ContentCopy(), ContentCut() (+4 more)
 
-### Community 33 - "Community 33"
-Cohesion: 0.25
-Nodes (5): CameraIcon(), CarBatteryIcon(), ContentCut(), GamepadIcon(), LivestreamIcon()
+### Community 33 - "DeviceInfo/index.jsx"
+Cohesion: 0.19
+Nodes (3): DeviceInfo, deviceIsOnline(), truncateName()
 
-### Community 34 - "Community 34"
-Cohesion: 0.20
-Nodes (9): author, engines, bun, node, name, packageManager, private, repository (+1 more)
+### Community 34 - "package.json"
+Cohesion: 0.11
+Nodes (17): author, contributors, firebase@13.1.0, posthog-js@^1.419.4, react-router-dom@^5.3.4, engines, bun, node (+9 more)
 
-### Community 35 - "Community 35"
-Cohesion: 0.20
-Nodes (10): scripts, build:development, build:gallery, build:production, lint, serve, start, test (+2 more)
+### Community 35 - "scripts"
+Cohesion: 0.18
+Nodes (11): scripts, build:development, build:gallery, build:production, lint, serve, start, start:ssl (+3 more)
 
-### Community 36 - "Community 36"
+### Community 36 - "manifest.json"
 Cohesion: 0.20
 Nodes (9): background_color, display, icons, lang, name, orientation, short_name, start_url (+1 more)
 
-### Community 37 - "Community 37"
+### Community 37 - "RTK - Rust Token Killer (Google Antigravity)"
 Cohesion: 0.40
 Nodes (4): Meta Commands, RTK - Rust Token Killer (Google Antigravity), Rule, Why
 
-### Community 38 - "Community 38"
+### Community 38 - "Agent Guidelines for MarkenJaden Drive"
 Cohesion: 0.50
 Nodes (3): Agent Guidelines for MarkenJaden Drive, Knowledge Graph & Architecture Navigation (`graphify`), System Components
 
-### Community 41 - "Community 41"
-Cohesion: 0.22
-Nodes (8): categories, correctness, globals, gtag, version, $schema, settings, react
+### Community 39 - "types.js"
+Cohesion: 0.06
+Nodes (31): ACTION_BUFFER_VIDEO, ACTION_FILES_CANCELLED_UPLOADS, ACTION_FILES_UPDATE, ACTION_FILES_UPLOADING, ACTION_FILES_URLS, ACTION_LOOP, ACTION_PAUSE, ACTION_PLAY (+23 more)
 
-### Community 49 - "Community 49"
-Cohesion: 0.40
-Nodes (5): env, browser, es6, node, vitest
+### Community 40 - "server/index.js"
+Cohesion: 0.19
+Nodes (7): CONTENT_TYPES, buildQcameraM3u8(), execFileAsync, generateSpriteAsync(), probeDurationSeconds(), request(), runTests()
 
-### Community 50 - "Community 50"
-Cohesion: 0.40
-Nodes (5): ignorePatterns, build/, dist/, node_modules/, public/
+### Community 41 - "steps"
+Cohesion: 0.06
+Nodes (30): runs-on, steps, timeout-minutes, BASELINE_URL, PUPPETEER_EXECUTABLE_PATH, PUPPETEER_SKIP_DOWNLOAD, VITE_APP_GIT_SHA, VITE_POSTHOG_HOST (+22 more)
 
-### Community 51 - "Community 51"
-Cohesion: 0.40
-Nodes (5): plugins, import, oxc, typescript, unicorn
+### Community 42 - "with"
+Cohesion: 0.06
+Nodes (30): default, description, required, type, dry_run, jobs, sync, name (+22 more)
 
-### Community 52 - "Community 52"
-Cohesion: 0.50
-Nodes (3): formatPlaceAddress(), formatPlaceName(), NOTE: this is a hack to remove the name from the address. it's necessary
+### Community 43 - "createDriveServer"
+Cohesion: 0.12
+Nodes (22): createDriveServer(), authMiddleware(), buildSignedUploadEntry(), extractAuthToken(), handleGetDevice(), optionalAuthMiddleware(), verifyToken(), generateDongleId() (+14 more)
 
-### Community 53 - "Community 53"
+### Community 44 - "web"
+Cohesion: 0.09
+Nodes (23): build, environment, restart, volumes, VITE_ATHENA_URL_ROOT, VITE_BILLING_URL_ROOT, VITE_COMMA_URL_ROOT, VITE_USERADMIN_URL_ROOT (+15 more)
+
+### Community 45 - "Navigation/index.jsx"
+Cohesion: 0.23
+Nodes (6): react-redux, Dashboard(), IoniqPanel, LogsPanel, Prime, initialState
+
+### Community 46 - "UploadQueue"
+Cohesion: 0.23
+Nodes (4): cancelFetchUploadQueue(), UploadQueue, HighlightOffIcon(), deviceOnCellular()
+
+### Community 47 - "react"
+Cohesion: 0.18
+Nodes (11): react, DriveList(), DriveListItem(), defaultState, store, ScrollIntoView(), FilterList(), RightArrow() (+3 more)
+
+### Community 48 - "args"
+Cohesion: 0.10
+Nodes (21): build, environment, restart, volumes, VITE_ATHENA_URL_ROOT, VITE_BILLING_URL_ROOT, VITE_COMMA_URL_ROOT, VITE_USERADMIN_URL_ROOT (+13 more)
+
+### Community 49 - "App.jsx"
+Cohesion: 0.14
+Nodes (17): account, athena, athenaRequest, auth, billingRequest, devices, raw, request (+9 more)
+
+### Community 50 - "args"
+Cohesion: 0.13
+Nodes (14): VITE_ATHENA_URL_ROOT, VITE_BILLING_URL_ROOT, VITE_COMMA_URL_ROOT, VITE_REFERRAL_URL, VITE_SENTRY_ENV, VITE_USERADMIN_URL_ROOT, args, context (+6 more)
+
+### Community 53 - "live.sh"
 Cohesion: 0.50
 Nodes (3): BUN_INSTALL, PATH, live.sh script
 
-### Community 54 - "Community 54"
-Cohesion: 0.50
-Nodes (4): contributors, Cameron Clough <cameronjclough@gmail.com>, Chris Vickery <chrisinajar@gmail.com>, Joost Wooning <jwooning@gmail.com>
+### Community 54 - "playback.js"
+Cohesion: 0.21
+Nodes (5): percentFromPointerEvent(), store, currentOffset(), seek(), mostRecentNow
 
-### Community 55 - "Community 55"
-Cohesion: 0.50
-Nodes (4): trustedDependencies, core-js, jss, @sentry/cli
+### Community 55 - "history.js"
+Cohesion: 0.48
+Nodes (9): onHistoryMiddleware(), createInitialState(), getDongleID(), getPrimeNav(), getRouteId(), getRouteZoom(), getStreamNav(), getZoom() (+1 more)
 
-### Community 57 - "Community 57"
+### Community 56 - "Timeline/index.jsx"
+Cohesion: 0.18
+Nodes (5): dayjs, pushTimelineRange(), DriveView, AlertStatusCodes, theme
+
+### Community 57 - "latency-transform-worker.js"
 Cohesion: 0.67
 Nodes (3): extractTimingSei(), SEI_PREFIX, transform()
 
-### Community 59 - "Community 59"
-Cohesion: 0.67
-Nodes (3): no-plusplus, no-unused-vars, error
+### Community 59 - "Referrals/index.jsx"
+Cohesion: 0.42
+Nodes (5): Referrals(), referralSteps, claimMailto(), referralUrl(), isMobileDevice()
+
+### Community 60 - "vite.config.mjs"
+Cohesion: 0.13
+Nodes (10): @sentry/vite-plugin@^2.7.0, @tailwindcss/vite@^4, vite@^5, @vitejs/plugin-basic-ssl@1.2.0, @vitejs/plugin-react@^4.0.4, @sentry/vite-plugin, @tailwindcss/vite, vite (+2 more)
+
+### Community 65 - "globalState.js"
+Cohesion: 0.27
+Nodes (9): deviceCompareFn(), eventsMap, locationMap, populateFetchedAt(), reducer(), rootReducer(), reducer(), getDefaultFilter() (+1 more)
+
+### Community 66 - "vitest"
+Cohesion: 0.33
+Nodes (5): @testing-library/react@^13.4.0, @testing-library/react, mockRoute, percentToOffsetMock, thumbnailBounds
+
+### Community 67 - "IosPwaPopup"
+Cohesion: 0.24
+Nodes (3): IosPwaPopup, Notification(), Clear()
+
+### Community 68 - "TimeSelect/index.jsx"
+Cohesion: 0.43
+Nodes (5): selectTimeFilter(), formatDate(), parseDate(), styles, TimeSelect()
+
+### Community 70 - "DeviceSettingsModal"
+Cohesion: 0.15
+Nodes (4): CommacareBadge(), DeviceSettingsModal, ErrorOutline(), SaveIcon()
+
+### Community 71 - "App.test.jsx"
+Cohesion: 0.18
+Nodes (8): history@^4.10.1, history, devices, json(), makeRoute(), mockFetch(), mocks, START
+
+### Community 72 - "2. Invariants in Shared Files"
+Cohesion: 0.17
+Nodes (11): 1. Protected Files & Directories (Fork-Specific), 2. Invariants in Shared Files, 3. Conflict Resolution Strategy, `Dockerfile` & `docker-compose*.yml`, Fork Divergences & Architecture Invariants, `nginx.conf`, `src/api.js`, `src/components/anonymous.jsx` (+3 more)
+
+### Community 73 - "PrimeCheckout"
+Cohesion: 0.27
+Nodes (3): Prime(), PrimeCheckout, KeyboardBackspaceIcon()
+
+### Community 76 - "backend.js"
+Cohesion: 0.38
+Nodes (5): @commaai/my-comma-auth, createRealBackend(), DEMO_PATH, initBackend(), selectBackendType()
+
+### Community 78 - "history.test.js"
+Cohesion: 0.40
+Nodes (3): baseState, create(), drives
 
 ## Knowledge Gaps
-- **208 isolated node(s):** `$schema`, `import`, `typescript`, `unicorn`, `oxc` (+203 more)
-  These have ≤1 connection - possible missing edges or undocumented components.
-- **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3 isolated node(s):** `BUN_INSTALL`, `PATH`, `PREVIEW`
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 504 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `Community 11` to `Community 0`, `Community 1`, `Community 32`, `Community 33`, `Community 4`, `Community 2`, `Community 6`, `Community 7`, `Community 13`, `Community 14`, `Community 18`, `Community 51`, `Community 23`, `Community 25`, `Community 26`, `Community 30`, `Community 31`?**
-  _High betweenness centrality (0.221) - this node is a cross-community bridge._
-- **Why does `createAppStore()` connect `Community 25` to `Community 3`?**
-  _High betweenness centrality (0.145) - this node is a cross-community bridge._
-- **Why does `redux` connect `Community 3` to `Community 25`?**
-  _High betweenness centrality (0.145) - this node is a cross-community bridge._
-- **What connects `$schema`, `import`, `typescript` to the rest of the system?**
-  _216 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05926251097453907 - nodes in this community are weakly interconnected._
-- **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.05889724310776942 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.10252100840336134 - nodes in this community are weakly interconnected._
+- **Why does `react` connect `react` to `actions/index.js`, `PrimeManage.jsx`, `dependencies`, `BodyTeleop/index.jsx`, `icons/index.jsx`, `ClipMenu.jsx`, `@material-ui/core`, `DriveVideo/index.jsx`, `cached.js`, `explorer.jsx`, `files.js`, `IoniqPanel/index.jsx`, `AppHeader/index.jsx`, `icons/index.jsx`, `package.json`, `Navigation/index.jsx`, `UploadQueue`, `App.jsx`, `Timeline/index.jsx`, `Referrals/index.jsx`, `vitest`, `TimeSelect/index.jsx`, `App.test.jsx`, `backend.js`?**
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
+- **Are the 4 inferred relationships involving `createDriveServer()` (e.g. with `authMiddleware()` and `close()`) actually correct?**
+  _`createDriveServer()` has 4 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `BUN_INSTALL`, `PATH`, `PREVIEW` to the rest of the system?**
+  _3 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `actions/index.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.14717741935483872 - nodes in this community are weakly interconnected._
+- **Why does `vite` connect `vite.config.mjs` to `build-gallery.mjs`, `package.json`?**
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+- **Should `dependencies` be split into smaller, more focused modules?**
+  _Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected._
+- **Why does `@material-ui/core` connect `@material-ui/core` to `PrimeManage.jsx`, `dependencies`, `BodyTeleop/index.jsx`, `icons/index.jsx`, `ClipMenu.jsx`, `DriveVideo/index.jsx`, `cached.js`, `explorer.jsx`, `files.js`, `AppHeader/index.jsx`, `icons/index.jsx`, `package.json`, `Navigation/index.jsx`, `UploadQueue`, `react`, `Timeline/index.jsx`, `Referrals/index.jsx`, `IosPwaPopup`, `TimeSelect/index.jsx`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._

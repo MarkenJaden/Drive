@@ -23,7 +23,7 @@ const Promotions = ({ device, dispatch }) => {
   const [blackFridayDismissed, dismissBlackFriday] = usePersistentDismissal(BLACK_FRIDAY_DISMISSAL_KEY);
   const [primeDismissed, setPrimeDismissed] = useState(false);
 
-  if (!device.is_owner) return null;
+  if (!device.is_owner || device.prime) return null;
 
   const showBlackFriday = !blackFridayDismissed;
   const showReferral = !referralDismissed;

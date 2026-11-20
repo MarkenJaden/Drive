@@ -50,9 +50,8 @@ export default defineConfig(({ command, mode }) => {
       // Local development can use the same Athena client through a same-origin path.
       proxy: {
         '/athena': {
-          target: 'https://athena.comma.ai',
+          target: 'http://localhost:4000',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/athena/, ''),
         },
         '/api': {
           target: 'http://localhost:4000',
@@ -66,8 +65,17 @@ export default defineConfig(({ command, mode }) => {
           target: 'http://localhost:4000',
           changeOrigin: true,
         },
+        '/v1.4': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
         '/v2': {
           target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
+        '/ws': {
+          target: 'ws://localhost:4000',
+          ws: true,
           changeOrigin: true,
         },
       },

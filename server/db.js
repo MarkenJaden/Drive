@@ -2,9 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 
-const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-const DEVICES_FILE = path.join(DATA_DIR, 'devices.json');
+export function getDataDir() {
+  return process.env.DATA_DIR || path.join(process.cwd(), 'data');
+}
+
+function getUsersFile() {
+  return path.join(getDataDir(), 'users.json');
+}
+
+function getDevicesFile() {
+  return path.join(getDataDir(), 'devices.json');
+}
 
 function ensureDirectoryExists(dir) {
   if (!fs.existsSync(dir)) {
@@ -26,15 +34,18 @@ function readJson(filePath, defaultValue) {
 
 function writeJson(filePath, data) {
   ensureDirectoryExists(path.dirname(filePath));
-  const tempPath = `${filePath}.tmp.${Date.now()}`;
+  const tempPath = `${filePath}.tmp.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}`;
   fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
   fs.renameSync(tempPath, filePath);
 }
 
 export function initDb() {
-  ensureDirectoryExists(DATA_DIR);
+  const dataDir = getDataDir();
+  const usersFile = getUsersFile();
+  const devicesFile = getDevicesFile();
+  ensureDirectoryExists(dataDir);
 
-  let users = readJson(USERS_FILE, []);
+  let users = readJson(usersFile, []);
   const adminUsername = process.env.ADMIN_USER || 'admin';
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
   const adminEmail = process.env.ADMIN_EMAIL || `${adminUsername}@markenjaden.de`;
@@ -54,15 +65,15 @@ export function initDb() {
       createdAt: new Date().toISOString(),
     };
     users.push(adminUser);
-    writeJson(USERS_FILE, users);
+    writeJson(usersFile, users);
     console.log(`[DB] Created initial administrator account '${adminUsername}'`);
   }
 
-  readJson(DEVICES_FILE, []);
+  readJson(devicesFile, []);
 }
 
 export function getUsers() {
-  return readJson(USERS_FILE, []);
+  return readJson(getUsersFile(), []);
 }
 
 export function getUserById(id) {
@@ -76,6 +87,7 @@ export function getUserByUsername(username) {
 }
 
 export function saveUser(user) {
+  const usersFile = getUsersFile();
   const users = getUsers();
   const idx = users.findIndex((u) => u.id === user.id);
   if (idx >= 0) {
@@ -83,12 +95,12 @@ export function saveUser(user) {
   } else {
     users.push(user);
   }
-  writeJson(USERS_FILE, users);
+  writeJson(usersFile, users);
   return user;
 }
 
 export function getDevices(userId = null) {
-  const devices = readJson(DEVICES_FILE, []);
+  const devices = readJson(getDevicesFile(), []);
   if (userId) {
     return devices.filter((d) => d.owner_id === userId || d.is_owner);
   }
@@ -96,12 +108,12 @@ export function getDevices(userId = null) {
 }
 
 export function getDevice(dongleId) {
-  const devices = readJson(DEVICES_FILE, []);
+  const devices = readJson(getDevicesFile(), []);
   return devices.find((d) => d.dongle_id === dongleId) || null;
 }
 
 export function getDeviceBySerialOrKey(serial, publicKey) {
-  const devices = readJson(DEVICES_FILE, []);
+  const devices = readJson(getDevicesFile(), []);
   return (
     devices.find(
       (d) =>
@@ -112,19 +124,21 @@ export function getDeviceBySerialOrKey(serial, publicKey) {
 }
 
 export function saveDevice(device) {
-  const devices = readJson(DEVICES_FILE, []);
+  const devicesFile = getDevicesFile();
+  const devices = readJson(devicesFile, []);
   const idx = devices.findIndex((d) => d.dongle_id === device.dongle_id);
   if (idx >= 0) {
     devices[idx] = { ...devices[idx], ...device };
   } else {
     devices.push(device);
   }
-  writeJson(DEVICES_FILE, devices);
+  writeJson(devicesFile, devices);
   return device;
 }
 
 export function deleteDevice(dongleId) {
-  let devices = readJson(DEVICES_FILE, []);
+  const devicesFile = getDevicesFile();
+  let devices = readJson(devicesFile, []);
   devices = devices.filter((d) => d.dongle_id !== dongleId);
-  writeJson(DEVICES_FILE, devices);
+  writeJson(devicesFile, devices);
 }

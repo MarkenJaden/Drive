@@ -128,6 +128,15 @@ const DriveListItem = (props) => {
             {drive.demo_title}
           </div>
         ) : null}
+        {drive.ioniq && (drive.ioniq.avgLPer100Km != null || drive.ioniq.fuelLiters != null) ? (
+          <div className="mb-3 w-fit rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-200">
+            {[
+              drive.ioniq.avgLPer100Km != null ? `${Number(drive.ioniq.avgLPer100Km).toFixed(2)} L/100km` : null,
+              drive.ioniq.evDistancePct != null ? `EV ${Math.round(drive.ioniq.evDistancePct)}%` : null,
+              drive.ioniq.fuelLiters != null ? `${Number(drive.ioniq.fuelLiters).toFixed(2)} L` : null,
+            ].filter(Boolean).join(' · ')}
+          </div>
+        ) : null}
         <Grid container>
           <div className={classes.driveGridItem} style={gridStyle.date}>
             <Typography className={classes.firstLine}>{startDate}</Typography>

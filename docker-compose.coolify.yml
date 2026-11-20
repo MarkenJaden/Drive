@@ -8,7 +8,7 @@ services:
       args:
         VITE_COMMA_URL_ROOT: "/"
         VITE_ATHENA_URL_ROOT: "/athena/"
-        VITE_BILLING_URL_ROOT: "/v1/prime/"
+        VITE_BILLING_URL_ROOT: "/"
         VITE_USERADMIN_URL_ROOT: "/v1/me/"
     environment:
       - SERVICE_FQDN_DRIVE

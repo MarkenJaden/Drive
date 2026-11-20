@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { connect } from 'react-redux';
 
 import DriveList from './DriveList';
@@ -8,8 +8,12 @@ import DeviceInfo from '../DeviceInfo';
 import FullPageLoading from '../FullPageLoading';
 
 const Prime = lazy(() => import('../Prime'));
+const IoniqPanel = lazy(() => import('../IoniqPanel'));
+const LogsPanel = lazy(() => import('../LogsPanel'));
 
 const Dashboard = ({ primeNav, device, dongleId }) => {
+  const [activeTab, setActiveTab] = useState('drives');
+
   if (!device || !dongleId) {
     return <FullPageLoading />;
   }
@@ -24,7 +28,29 @@ const Dashboard = ({ primeNav, device, dongleId }) => {
               <Navigation />
               <Promotions />
               <DeviceInfo />
-              <DriveList />
+              <div className="flex flex-wrap gap-2 px-4 pt-3 pb-1 border-b border-white/10">
+                {[
+                  { id: 'drives', label: 'Fahrten' },
+                  { id: 'ioniq', label: 'Ioniq & Verbrauch' },
+                  { id: 'logs', label: 'Logs & System' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer ${
+                      activeTab === tab.id
+                        ? 'bg-white text-black'
+                        : 'bg-white/10 text-white/80 hover:bg-white/20'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              {activeTab === 'drives' && <DriveList />}
+              {activeTab === 'ioniq' && <IoniqPanel dongleId={dongleId} />}
+              {activeTab === 'logs' && <LogsPanel dongleId={dongleId} />}
             </>
           )}
       </Suspense>

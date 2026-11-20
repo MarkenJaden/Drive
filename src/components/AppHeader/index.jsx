@@ -191,7 +191,7 @@ const AppHeader = ({
               href={`/${dongleId}`}
               onClick={filterRegularClick(() => dispatch(selectDevice(dongleId)))}
             >
-              <Typography className={classes.logoText}>connect</Typography>
+              <Typography className={classes.logoText}>MarkenJaden Drive</Typography>
             </a>
           </div>
           <div className="flex flex-row gap-2">

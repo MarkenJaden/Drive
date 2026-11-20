@@ -10,10 +10,14 @@ When merging upstream updates (e.g. via `upstream-sync.yml` and the Gemini confl
 ## 1. Protected Files & Directories (Fork-Specific)
 
 The following files and directories are unique to this fork and must never be deleted or reverted by upstream merges:
-- `server/`: Companion API & Auth service (Node.js/Express) providing self-hosted JWT issuance, TOTP 2FA, and device endpoints.
+- `server/`: Companion API & Auth service (Node.js/Express) providing self-hosted JWT issuance, TOTP 2FA, device endpoints, signed upload & HLS streaming storage (`server/storage.js`, `server/media.js`), Athena WebSocket bridge + `forwardLogs`, and Ioniq telemetry endpoints.
+- `server/server.test.js`: Integration tests for Companion API, storage signing, Athena concurrency, and Ioniq sync.
 - `docker-compose.yml`: General multi-container Docker Compose configuration.
 - `docker-compose.coolify.yml`: Coolify-optimized Docker Compose configuration with magic variables.
 - `src/components/SelfHostedLogin.jsx`: Frontend component for self-hosted username/password login, TOTP prompt, and 2FA QR code setup.
+- `src/api/ioniq.js`: Frontend client helpers for `/api/ioniq/...` and `/api/logs/...` endpoints.
+- `src/components/IoniqPanel/`: Frontend dashboard panel for Hyundai Ioniq fuel consumption, Tank-to-Tank refuels, 14-ECU diagnostics, and flight recordings.
+- `src/components/LogsPanel/`: Frontend dashboard panel for Athena swaglogs, bootlogs, and crashlogs.
 - `FORK_DIVERGENCES.md`: This specification file.
 - `.github/workflows/upstream-sync.yml`: The upstream synchronization workflow.
 - `graphify-out/`: Knowledge graph and indexing cache.
@@ -33,24 +37,30 @@ The following files and directories are unique to this fork and must never be de
 - Do not hardcode `https://api.comma.ai/` as the only fallback.
 
 ### `nginx.conf`
-- Must retain reverse proxy blocks for:
+- Must retain `client_max_body_size 512M;` and reverse proxy blocks for:
   - `/api/` -> `http://api:4000/api/`
+  - `/v1/storage/` -> `http://api:4000/v1/storage/` (streaming `proxy_request_buffering off;` and `proxy_buffering off;`)
   - `/v1/` -> `http://api:4000/v1/`
   - `/v1.1/` -> `http://api:4000/v1.1/`
+  - `/v1.4/` -> `http://api:4000/v1.4/`
   - `/v2/` -> `http://api:4000/v2/`
   - `/athena/` -> `http://api:4000/athena/`
-  - `/ws/` -> `http://api:4000/ws/` (with WebSocket Upgrade headers)
+  - `/ws/` -> `http://api:4000/ws/` (with WebSocket Upgrade headers & extended `3600s` send/read timeouts)
 - SPA fallback routing (`try_files $uri /index.html =404;`) must remain intact.
 
 ### `vite.config.mjs`
-- Must retain proxy configurations for local development:
-  - `/api` -> `http://localhost:4000`
-  - `/v1` -> `http://localhost:4000`
-  - `/v1.1` -> `http://localhost:4000`
-  - `/v2` -> `http://localhost:4000`
+- Must retain proxy configurations for local development (`/api`, `/v1`, `/v1.1`, `/v1.4`, `/v2`, `/athena`, `/ws` with `ws: true`) -> `http://localhost:4000`.
 
-### `Dockerfile`
-- Must default the build argument `ARG VITE_COMMA_URL_ROOT=/` so that production frontend builds use the same-origin reverse proxy.
+### `Dockerfile` & `docker-compose*.yml`
+- Must default the build argument `ARG VITE_COMMA_URL_ROOT=/`, `VITE_ATHENA_URL_ROOT=/athena/`, `VITE_BILLING_URL_ROOT=/`, `VITE_USERADMIN_URL_ROOT=/v1/me/` so that production frontend builds route through the same-origin reverse proxy without double prefixes.
+- `server/Dockerfile` installs `ffmpeg` for HLS segment duration probing (`ffprobe`) and timeline sprite generation (`ffmpeg`).
+
+### `src/components/Dashboard/index.jsx` & `DriveListItem.jsx`
+- `Dashboard` renders `Fahrten` (`DriveList`, default tab — no extra network calls on initial mount so upstream tests remain intact), `Ioniq & Verbrauch` (`IoniqPanel`), and `Logs & System` (`LogsPanel`).
+- `DriveListItem` displays `drive.ioniq` fuel/EV badge when synced telemetry exists.
+
+### `src/components/AppHeader/index.jsx`, `AppDrawer/index.jsx`, `Promotions/index.jsx`
+- Retain `MarkenJaden Drive` branding and suppress comma referral/prime upsells when `device.prime` is true.
 
 ---
 
